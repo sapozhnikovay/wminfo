@@ -62,7 +62,6 @@ namespace wminfo
 
         static void DisplayVersion()
         {
-            //TODO: Display application version
             Console.WriteLine("wminfo "+ Assembly.GetExecutingAssembly().GetName().Version.ToString());
         }
 
@@ -78,6 +77,7 @@ namespace wminfo
                     case "--version":
                         DisplayVersion();
                         break;
+                    //TODO: Add filepath check for correctness
                     case "-i":
                         inFile = args[i + 1];
                         break;
