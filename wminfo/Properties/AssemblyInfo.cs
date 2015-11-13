@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("wminfo")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("JAVAD GNSS")]
 [assembly: AssemblyProduct("wminfo")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Copyright © Alexey Sapozhnikov. 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Можно задать все значения или принять номера сборки и редакции по умолчанию 
 // используя "*", как показано ниже:
 //[assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.0.4.1244")]
-[assembly: AssemblyFileVersion("0.0.4.1244")]
+[assembly: AssemblyVersion("0.0.26.1439")]
+[assembly: AssemblyFileVersion("0.0.26.1439")]
