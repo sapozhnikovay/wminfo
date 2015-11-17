@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using wminfo.Lib;
 
 /*Application options
 --help                  display help
@@ -25,6 +26,10 @@ namespace wminfo
     {
         private static string inFile;
         private static string outFile;
+        private static string target;
+        private static string username;
+        private static string password;
+        private static string format = "txt";
 
         static int Main(string[] args)
         {
@@ -38,6 +43,10 @@ namespace wminfo
                 ParseArguments(args);
             }
 
+            var computer = Crawler.GetInfo(target, username, password);
+            Export(computer, format, outFile);
+
+            Console.WriteLine("\n\nPress any key to quit...");
             Console.ReadKey();
             return 0;
         }
@@ -45,7 +54,7 @@ namespace wminfo
         static void DisplayHelp()
         {
             // TODO: Add help display
-            Console.WriteLine("Usage: wminfo [OPTIONS]...");
+            Console.WriteLine("Usage: wminfo [TARGET] [OPTIONS]...");
             Console.WriteLine("Get information about local or remote computer via WMI.");
             Console.WriteLine("Query information from local computer and display summary on screeen if no options specified.\n");
             Console.WriteLine("  --help\t\t\tdisplay this help and exit");
@@ -67,15 +76,25 @@ namespace wminfo
 
         static void ParseArguments(string[] args)
         {
-            for(int i=0;i<args.Length;i++)
+            if (!args[0].ToString().StartsWith("-"))
+            {
+                target = args[0].ToString();
+            }
+            else
+            {
+                ErrorExit("ERROR: Target computer name or ip-address not defined.");
+            }
+            for(int i=1;i<args.Length;i++)
             {
                 switch (args[i])
                 {
                     case "--help":
                         DisplayHelp();
+                        ErrorExit("");
                         break;
                     case "--version":
                         DisplayVersion();
+                        ErrorExit("");
                         break;
                     //TODO: Add filepath check for correctness
                     case "-i":
@@ -84,9 +103,47 @@ namespace wminfo
                     case "-o":
                         outFile = args[i + 1];
                         break;
+                    case "-l":
+                        username = args[i + 1];
+                        break;
+                    case "-p":
+                        password = args[i + 1];
+                        break;
+                    case "-f":
+                        format = args[i + 1];
+                        break;
                     default:
                         break;
                 }
+            }
+        }
+
+        static void ErrorExit(string message)
+        {
+            Console.WriteLine(message);
+            Environment.Exit(1);
+        }
+
+        static void Export(Computer data, string format, string outfile)
+        {
+            string outstr = "";
+            switch (format)
+            {
+                case "txt":
+                    outstr = data.ToTxt();
+                    break;
+                case "csv":
+                    outstr = data.ToCsv();
+                    break;
+            }
+            if(outfile != null)
+            {
+                // output to file
+            }
+            else
+            {
+                Console.WriteLine(outstr);
+                // print to screen
             }
         }
     }
