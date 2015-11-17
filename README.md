@@ -1,0 +1,2 @@
+# wminfo
+WMI Info tool
