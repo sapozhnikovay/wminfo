@@ -22,7 +22,7 @@
     <AssemblyVersionSettings>None.None.Increment.TimeStamp</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>None.None.Increment.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>None.None.Increment.TimeStamp</AssemblyInfoVersionSettings>
-    <AssemblyVersion>0.0.59.1503</AssemblyVersion>
+    <AssemblyVersion>0.0.73.1020</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -78,12 +78,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lib\CacheMemory.cs" />
     <Compile Include="Lib\Computer.cs" />
     <Compile Include="Lib\Crawler.cs" />
     <Compile Include="Lib\OperatingSystem.cs" />
     <Compile Include="Lib\Processor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SoftwareProduct.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

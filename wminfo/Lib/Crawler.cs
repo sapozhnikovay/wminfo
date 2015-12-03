@@ -9,7 +9,7 @@ namespace wminfo.Lib
 {
     static class Crawler
     {
-        public static Computer GetInfo(string targetHost, string username, string password)
+        public static Computer GetInfo(string targetHost, string username, string password, string[] categories)
         {
             Computer result = new Computer();
             if (targetHost == null) return null;
@@ -23,6 +23,9 @@ namespace wminfo.Lib
             scope.Connect();
 
             result.OperatingSystems = Get_OperatingSystems(scope);
+            result.SoftwareProducts = Get_SoftwareProducts(scope);
+            result.Processors = Get_Processors(scope);
+            result.CacheMemory = Get_CacheMemory(scope);
 
             return result;
         }
@@ -61,6 +64,81 @@ namespace wminfo.Lib
                 os.SKU = queryObj["OperatingSystemSKU"].ToString().Trim(' ');
                 os.ProductName = queryObj["Caption"].ToString().Trim(' ');
                 result.Add(os);
+            }
+
+            return result;
+        }
+
+        public static List<SoftwareProduct> Get_SoftwareProducts (ManagementScope scope)
+        {
+            List<SoftwareProduct> result = new List<SoftwareProduct>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_Product");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pr = new SoftwareProduct();
+                if (queryObj["Version"] != null) pr.Version = queryObj["Version"].ToString().Trim(' ');
+                if (queryObj["Vendor"] != null) pr.Vendor = queryObj["Vendor"].ToString().Trim(' ');
+                if (queryObj["InstallLocation"] != null) pr.InstallLocation = queryObj["InstallLocation"].ToString().Trim(' ');
+                if (queryObj["InstallSource"] != null) pr.InstallSource = queryObj["InstallSource"].ToString().Trim(' ');
+                if (queryObj["InstallDate"] != null) pr.InstallDate = queryObj["InstallDate"].ToString().Trim(' ');
+                if (queryObj["Name"] != null) pr.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["URLInfoAbout"] != null) pr.URLInfoAbout = queryObj["URLInfoAbout"].ToString().Trim(' ');
+                result.Add(pr);
+            }
+
+            return result;
+        }
+
+        public static List<Processor> Get_Processors(ManagementScope scope)
+        {
+            List<Processor> result = new List<Processor>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_Processor");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pr = new Processor();
+                if (queryObj["CurrentClockSpeed"] != null) pr.CurrentClockSpeed = Convert.ToInt32(queryObj["CurrentClockSpeed"].ToString().Trim(' '));
+                if (queryObj["MaxClockSpeed"] != null) pr.MaxClockSpeed = Convert.ToInt32(queryObj["MaxClockSpeed"].ToString().Trim(' '));
+                if (queryObj["ExtClock"] != null) pr.ExtClock = Convert.ToInt32(queryObj["ExtClock"].ToString().Trim(' '));
+                pr.Multiplier = pr.MaxClockSpeed / pr.ExtClock;
+                if (queryObj["Description"] != null) pr.Description = queryObj["Description"].ToString().Trim(' ');
+                if (queryObj["Manufacturer"] != null) pr.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["Status"] != null) pr.Status = queryObj["Status"].ToString().Trim(' ');
+                if (queryObj["Name"] != null) pr.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["SocketDesignation"] != null) pr.SocketDesignation = queryObj["SocketDesignation"].ToString().Trim(' ');
+                if (queryObj["L2CacheSize"] != null) pr.L2CacheSize = Convert.ToInt32(queryObj["L2CacheSize"].ToString().Trim(' '));
+                if (queryObj["L3CacheSize"] != null) pr.L3CacheSize = Convert.ToInt32(queryObj["L3CacheSize"].ToString().Trim(' '));
+                if (queryObj["CurrentVoltage"] != null) pr.CurrentVoltage = Convert.ToSingle(queryObj["CurrentVoltage"].ToString().Trim(' ')) / 10;
+                if (queryObj["UpgradeMethod"] != null) pr.UpgradeMethod = Convert.ToInt32(queryObj["UpgradeMethod"].ToString().Trim(' '));
+                if (queryObj["NumberOfCores"] != null) pr.NumberOfCores = Convert.ToInt32(queryObj["NumberOfCores"].ToString().Trim(' '));
+                if (queryObj["NumberOfLogicalProcessors"] != null) pr.NumberOfLogicalProcessors = Convert.ToInt32(queryObj["NumberOfLogicalProcessors"].ToString().Trim(' '));
+                if (pr.NumberOfCores < pr.NumberOfLogicalProcessors) pr.Multithreaded = true;
+                result.Add(pr);
+            }
+
+            return result;
+        }
+
+        public static List<CacheMemory> Get_CacheMemory(ManagementScope scope)
+        {
+            List<CacheMemory> result = new List<CacheMemory>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_CacheMemory");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pr = new CacheMemory();
+                if (queryObj["InstalledSize"] != null) pr.Size = Convert.ToInt32(queryObj["InstalledSize"].ToString().Trim(' '));
+                if (queryObj["CacheType"] != null) pr.Type = queryObj["CacheType"].ToString().Trim(' ');
+                if (queryObj["Level"] != null) pr.Level = queryObj["Level"].ToString().Trim(' ');
+                if (queryObj["Associativity"] != null) pr.Associativity = queryObj["Associativity"].ToString().Trim(' ');
+                result.Add(pr);
             }
 
             return result;

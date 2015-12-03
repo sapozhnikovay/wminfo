@@ -30,6 +30,7 @@ namespace wminfo
         private static string username;
         private static string password;
         private static string format = "txt";
+        private static string[] categories;
 
         static int Main(string[] args)
         {
@@ -43,7 +44,7 @@ namespace wminfo
                 ParseArguments(args);
             }
 
-            var computer = Crawler.GetInfo(target, username, password);
+            var computer = Crawler.GetInfo(target, username, password, categories);
             Export(computer, format, outFile);
 
             Console.WriteLine("\n\nPress any key to quit...");

@@ -9,6 +9,9 @@ namespace wminfo.Lib
     class Computer
     {
         public List<OperatingSystem> OperatingSystems;
+        public List<SoftwareProduct> SoftwareProducts;
+        public List<Processor> Processors;
+        public List<CacheMemory> CacheMemory;
 
         public Computer()
         {
@@ -18,9 +21,20 @@ namespace wminfo.Lib
         public string ToTxt()
         {
             string result = "";
-            foreach(OperatingSystem os in OperatingSystems)
+            result += "Processors\n--------------------\n\n";
+            foreach (Processor item in Processors)
+            {
+                result += item.ToTxt();
+            }
+            result += "Operating system\n--------------------\n\n";
+            foreach (OperatingSystem os in OperatingSystems)
             {
                 result += os.ToTxt();
+            }
+            result += "Software Products\n--------------------\n\n";
+            foreach (SoftwareProduct item in SoftwareProducts)
+            {
+                result += item.ToTxt();
             }
 
             return result;
