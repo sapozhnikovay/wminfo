@@ -16,6 +16,9 @@ namespace wminfo.Lib
         public Computer()
         {
             OperatingSystems = new List<OperatingSystem>();
+            SoftwareProducts = new List<SoftwareProduct>();
+            Processors = new List<Processor>();
+            CacheMemory = new List<CacheMemory>();
         }
 
         public string ToTxt()

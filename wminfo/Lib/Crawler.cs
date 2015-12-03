@@ -22,10 +22,10 @@ namespace wminfo.Lib
             ManagementScope scope = new ManagementScope("\\\\" + targetHost + "\\root\\CIMV2",options);
             scope.Connect();
 
-            result.OperatingSystems = Get_OperatingSystems(scope);
-            result.SoftwareProducts = Get_SoftwareProducts(scope);
-            result.Processors = Get_Processors(scope);
-            result.CacheMemory = Get_CacheMemory(scope);
+            if(categories.Contains("os")) result.OperatingSystems = Get_OperatingSystems(scope);
+            if (categories.Contains("software")) result.SoftwareProducts = Get_SoftwareProducts(scope);
+            if (categories.Contains("processor")) result.Processors = Get_Processors(scope);
+            if (categories.Contains("cachememory")) result.CacheMemory = Get_CacheMemory(scope);
 
             return result;
         }

@@ -97,6 +97,9 @@ namespace wminfo
                         DisplayVersion();
                         ErrorExit("");
                         break;
+                    case "--category":
+                        ParseCategories(args[i + 1]);
+                        break;
                     //TODO: Add filepath check for correctness
                     case "-i":
                         inFile = args[i + 1];
@@ -116,6 +119,16 @@ namespace wminfo
                     default:
                         break;
                 }
+            }
+        }
+
+        static void ParseCategories(string arg)
+        {
+            arg = arg.Trim('"');
+            categories = arg.Split(',');
+            for(int i =0;i < categories.Count();i++)
+            {
+                categories[i] = categories[i].Trim(' ').ToLower();
             }
         }
 
