@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using wminfo.Lib;
 
 /*Application options
@@ -22,37 +18,16 @@ using wminfo.Lib;
 
 namespace wminfo
 {
-    class Program
+    internal class Program
     {
+        private static string[] categories;
+        private static string format = "txt";
         private static string inFile;
         private static string outFile;
+        private static string password;
         private static string target;
         private static string username;
-        private static string password;
-        private static string format = "txt";
-        private static string[] categories;
-
-        static int Main(string[] args)
-        {
-            if (args.Length == 0)
-            {
-                
-                return 1;
-            }
-            else
-            {
-                ParseArguments(args);
-            }
-
-            var computer = Crawler.GetInfo(target, username, password, categories);
-            Export(computer, format, outFile);
-
-            Console.WriteLine("\n\nPress any key to quit...");
-            Console.ReadKey();
-            return 0;
-        }
-
-        static void DisplayHelp()
+        private static void DisplayHelp()
         {
             // TODO: Add help display
             Console.WriteLine("Usage: wminfo [TARGET] [OPTIONS]...");
@@ -70,12 +45,68 @@ namespace wminfo
             Console.WriteLine("  -p \"password\"\t\t\tpassword for WMI access");
         }
 
-        static void DisplayVersion()
+        private static void DisplayVersion()
         {
-            Console.WriteLine("wminfo "+ Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            Console.WriteLine("wminfo " + Assembly.GetExecutingAssembly().GetName().Version.ToString());
         }
 
-        static void ParseArguments(string[] args)
+        /// <summary>
+        /// Errors the exit.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private static void ErrorExit(string message)
+        {
+            Console.WriteLine(message);
+            Environment.Exit(1);
+        }
+
+        private static void Export(Computer data, string format, string outfile)
+        {
+            string outstr = "";
+            switch (format)
+            {
+                case "txt":
+                    outstr = data.ToTxt();
+                    break;
+
+                case "csv":
+                    outstr = data.ToCsv();
+                    break;
+            }
+            if (outfile != null)
+            {
+                // output to file
+            }
+            else
+            {
+                Console.WriteLine(outstr);
+                // print to screen
+            }
+        }
+
+        private static int Main(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                return 1;
+            }
+            else
+            {
+                ParseArguments(args);
+            }
+
+            var computer = Crawler.GetInfo(target, username, password, categories);
+            Export(computer, format, outFile);
+
+            Console.WriteLine("\n\nPress any key to quit...");
+            Console.ReadKey();
+            return 0;
+        }
+        /// <summary>
+        /// Parses the arguments.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        private static void ParseArguments(string[] args)
         {
             if (!args[0].ToString().StartsWith("-"))
             {
@@ -85,7 +116,7 @@ namespace wminfo
             {
                 ErrorExit("ERROR: Target computer name or ip-address not defined.");
             }
-            for(int i=1;i<args.Length;i++)
+            for (int i = 1; i < args.Length; i++)
             {
                 switch (args[i])
                 {
@@ -93,10 +124,12 @@ namespace wminfo
                         DisplayHelp();
                         ErrorExit("");
                         break;
+
                     case "--version":
                         DisplayVersion();
                         ErrorExit("");
                         break;
+
                     case "--category":
                         ParseCategories(args[i + 1]);
                         break;
@@ -104,60 +137,40 @@ namespace wminfo
                     case "-i":
                         inFile = args[i + 1];
                         break;
+
                     case "-o":
                         outFile = args[i + 1];
                         break;
+
                     case "-l":
                         username = args[i + 1];
                         break;
+
                     case "-p":
                         password = args[i + 1];
                         break;
+
                     case "-f":
                         format = args[i + 1];
                         break;
+
                     default:
                         break;
                 }
             }
         }
 
-        static void ParseCategories(string arg)
+        /// <summary>
+        /// Parses the categories.
+        /// </summary>
+        /// <param name="arg">The argument.</param>
+        private static void ParseCategories(string arg)
         {
             arg = arg.Trim('"');
             categories = arg.Split(',');
-            for(int i =0;i < categories.Count();i++)
+            for (int i = 0; i < categories.Count(); i++)
             {
                 categories[i] = categories[i].Trim(' ').ToLower();
-            }
-        }
-
-        static void ErrorExit(string message)
-        {
-            Console.WriteLine(message);
-            Environment.Exit(1);
-        }
-
-        static void Export(Computer data, string format, string outfile)
-        {
-            string outstr = "";
-            switch (format)
-            {
-                case "txt":
-                    outstr = data.ToTxt();
-                    break;
-                case "csv":
-                    outstr = data.ToCsv();
-                    break;
-            }
-            if(outfile != null)
-            {
-                // output to file
-            }
-            else
-            {
-                Console.WriteLine(outstr);
-                // print to screen
             }
         }
     }

@@ -22,7 +22,7 @@
     <AssemblyVersionSettings>None.None.Increment.TimeStamp</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>None.None.Increment.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>None.None.Increment.TimeStamp</AssemblyInfoVersionSettings>
-    <AssemblyVersion>0.0.79.1256</AssemblyVersion>
+    <AssemblyVersion>0.0.109.1202</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -48,6 +48,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Debug\wminfo.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -81,11 +82,14 @@
     <Compile Include="Lib\CacheMemory.cs" />
     <Compile Include="Lib\Computer.cs" />
     <Compile Include="Lib\Crawler.cs" />
+    <Compile Include="Lib\Memory.cs" />
+    <Compile Include="Lib\MemoryModule.cs" />
+    <Compile Include="Lib\Motherboard.cs" />
     <Compile Include="Lib\OperatingSystem.cs" />
     <Compile Include="Lib\Processor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SoftwareProduct.cs" />
+    <Compile Include="Lib\SoftwareProduct.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

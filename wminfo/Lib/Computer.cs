@@ -6,13 +6,20 @@ using System.Threading.Tasks;
 
 namespace wminfo.Lib
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class Computer
     {
         public List<OperatingSystem> OperatingSystems;
         public List<SoftwareProduct> SoftwareProducts;
         public List<Processor> Processors;
         public List<CacheMemory> CacheMemory;
+        public Memory Memory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Computer" /> class.
+        /// </summary>
         public Computer()
         {
             OperatingSystems = new List<OperatingSystem>();

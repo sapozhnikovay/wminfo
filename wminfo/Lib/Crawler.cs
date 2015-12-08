@@ -26,6 +26,7 @@ namespace wminfo.Lib
             if (categories.Contains("software")) result.SoftwareProducts = Get_SoftwareProducts(scope);
             if (categories.Contains("processor")) result.Processors = Get_Processors(scope);
             if (categories.Contains("cachememory")) result.CacheMemory = Get_CacheMemory(scope);
+            if (categories.Contains("ram")) result.Memory = Get_Memory(scope);
 
             return result;
         }
@@ -140,6 +141,61 @@ namespace wminfo.Lib
                 if (queryObj["Associativity"] != null) pr.Associativity = queryObj["Associativity"].ToString().Trim(' ');
                 result.Add(pr);
             }
+
+            return result;
+        }
+
+        public static Memory Get_Memory(ManagementScope scope)
+        {
+            Memory result = new Memory();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_PageFileUsage");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                result.PagefileSizeActual = Convert.ToInt32(queryObj["CurrentUsage"].ToString().Trim(' '));
+                result.PagefileSizeMaximum = Convert.ToInt32(queryObj["AllocatedBaseSize"].ToString().Trim(' '));
+            }
+
+            wmiquery = new ObjectQuery("SELECT * FROM Win32_OperatingSystem");
+            searcher = new ManagementObjectSearcher(scope, wmiquery);
+            coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                result.VirtualMemorySize = Convert.ToInt32(queryObj["TotalVirtualMemorySize"].ToString().Trim(' '));
+                result.TotalVisibleMemorySize = Convert.ToInt32(queryObj["TotalVisibleMemorySize"].ToString().Trim(' '))/1024;
+                result.FreeMemorySize = Convert.ToInt32(queryObj["FreePhysicalMemory"].ToString().Trim(' '))/1024;
+            }
+
+            wmiquery = new ObjectQuery("SELECT * FROM Win32_ComputerSystem");
+            searcher = new ManagementObjectSearcher(scope, wmiquery);
+            coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                result.PhysicalMemorySize = (int)(Convert.ToInt64(queryObj["TotalPhysicalMemory"].ToString().Trim(' '))/1024/1024); //Нужно переделать. Не точное число физической памяти.
+            }
+
+            result.MemoryLoadPercentage = (int)((float)((float)result.PhysicalMemorySize / (float)result.FreeMemorySize) * 10);
+            
+            wmiquery = new ObjectQuery("SELECT * FROM Win32_PhysicalMemory");
+            searcher = new ManagementObjectSearcher(scope, wmiquery);
+            coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                MemoryModule mm = new MemoryModule();
+                mm.Capacity = (int)(Convert.ToInt64(queryObj["Capacity"].ToString().Trim(' ')) / 1024 / 1024);
+                mm.BankLabel = queryObj["BankLabel"].ToString().Trim(' ');
+                mm.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["InstallDate"] != null) mm.ManufactureDate = queryObj["InstallDate"].ToString().Trim(' ');
+                mm.MemoryType = queryObj["MemoryType"].ToString().Trim(' ');
+                mm.FormFactor = queryObj["FormFactor"].ToString().Trim(' ');
+                mm.PartNumber = queryObj["PartNumber"].ToString().Trim(' ');
+                mm.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                mm.Speed = queryObj["Speed"].ToString().Trim(' ');
+                result.MemoryModules.Add(mm);
+            }
+
 
             return result;
         }
