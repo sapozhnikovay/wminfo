@@ -27,6 +27,7 @@ namespace wminfo.Lib
             if (categories.Contains("processor")) result.Processors = Get_Processors(scope);
             if (categories.Contains("cachememory")) result.CacheMemory = Get_CacheMemory(scope);
             if (categories.Contains("ram")) result.Memory = Get_Memory(scope);
+            if (categories.Contains("video")) result.VideoControllers = Get_VideoControllers(scope);
 
             return result;
         }
@@ -196,6 +197,34 @@ namespace wminfo.Lib
                 result.MemoryModules.Add(mm);
             }
 
+
+            return result;
+        }
+
+        public static List<VideoController> Get_VideoControllers(ManagementScope scope)
+        {
+            List<VideoController> result = new List<VideoController>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_VideoController");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var cp = new VideoController();
+                cp.Availability = queryObj["Availability"].ToString().Trim(' ');
+                cp.InstalledVideoRAM = queryObj["AdapterRAM"].ToString().Trim(' ');
+                cp.DACType = queryObj["AdapterDACType"].ToString().Trim(' ');
+                cp.AdapterFamily = queryObj["AdapterCompatibility"].ToString().Trim(' ');
+                cp.AdapterName = queryObj["Name"].ToString().Trim(' ');
+                cp.ScanMode = queryObj["CurrentScanMode"].ToString().Trim(' ');
+                cp.VideoArchitecture = queryObj["VideoArchitecture"].ToString().Trim(' ');
+                cp.VideoMemoryType = queryObj["VideoMemoryType"].ToString().Trim(' ');
+                cp.CurrentVideoMode = queryObj["CurrentHorizontalResolution"].ToString().Trim(' ') + " x " + queryObj["CurrentVerticalResolution"].ToString().Trim(' ') + " x " + queryObj["CurrentBitsPerPixel"].ToString().Trim(' ') + "bpp x " + queryObj["CurrentRefreshRate"].ToString().Trim(' ') + " Hz";
+                cp.DisplayDrivers = queryObj["InstalledDisplayDrivers"].ToString().Trim(' ');
+                cp.DriverVersion = queryObj["DriverVersion"].ToString().Trim(' ');
+                cp.DriverDate = queryObj["DriverDate"].ToString().Trim(' ');
+                result.Add(cp);
+            }
 
             return result;
         }

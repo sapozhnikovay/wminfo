@@ -16,6 +16,7 @@ namespace wminfo.Lib
         public List<Processor> Processors;
         public List<CacheMemory> CacheMemory;
         public Memory Memory;
+        public List<VideoController> VideoControllers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Computer" /> class.
@@ -26,6 +27,7 @@ namespace wminfo.Lib
             SoftwareProducts = new List<SoftwareProduct>();
             Processors = new List<Processor>();
             CacheMemory = new List<CacheMemory>();
+            VideoControllers = new List<VideoController>();
         }
 
         public string ToTxt()
