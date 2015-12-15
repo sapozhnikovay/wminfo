@@ -22,7 +22,7 @@
     <AssemblyVersionSettings>None.None.Increment.TimeStamp</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>None.None.Increment.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>None.None.Increment.TimeStamp</AssemblyInfoVersionSettings>
-    <AssemblyVersion>0.0.110.1829</AssemblyVersion>
+    <AssemblyVersion>0.0.113.1306</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -83,6 +83,7 @@
     <Compile Include="Lib\CacheMemory.cs" />
     <Compile Include="Lib\Chassis.cs" />
     <Compile Include="Lib\Computer.cs" />
+    <Compile Include="Lib\ComputerSystem.cs" />
     <Compile Include="Lib\Crawler.cs" />
     <Compile Include="Lib\Memory.cs" />
     <Compile Include="Lib\MemoryModule.cs" />

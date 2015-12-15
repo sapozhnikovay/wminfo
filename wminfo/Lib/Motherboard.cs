@@ -8,5 +8,14 @@ namespace wminfo.Lib
 {
     class Motherboard
     {
+        public string Manufacturer = "";
+        public string Name = "";
+        public string SerialNumber = "";
+        public string Version = "";
+
+        public Motherboard()
+        {
+
+        }
     }
 }

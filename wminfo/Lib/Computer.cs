@@ -17,6 +17,7 @@ namespace wminfo.Lib
         public List<CacheMemory> CacheMemory;
         public Memory Memory;
         public List<VideoController> VideoControllers;
+        public ComputerSystem ComputerSystem;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Computer" /> class.

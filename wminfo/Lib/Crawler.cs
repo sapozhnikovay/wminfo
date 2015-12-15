@@ -28,6 +28,7 @@ namespace wminfo.Lib
             if (categories.Contains("cachememory")) result.CacheMemory = Get_CacheMemory(scope);
             if (categories.Contains("ram")) result.Memory = Get_Memory(scope);
             if (categories.Contains("video")) result.VideoControllers = Get_VideoControllers(scope);
+            if (categories.Contains("mb")) result.ComputerSystem = Get_ComputerSystem(scope);
 
             return result;
         }
@@ -224,6 +225,58 @@ namespace wminfo.Lib
                 cp.DriverVersion = queryObj["DriverVersion"].ToString().Trim(' ');
                 cp.DriverDate = queryObj["DriverDate"].ToString().Trim(' ');
                 result.Add(cp);
+            }
+
+            return result;
+        }
+
+        public static ComputerSystem Get_ComputerSystem(ManagementScope scope)
+        {
+            ComputerSystem result = new ComputerSystem();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_BIOS");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                result.BIOS.Name = queryObj["Name"].ToString().Trim(' ');
+                result.BIOS.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                result.BIOS.ReleaseDate = queryObj["ReleaseDate"].ToString().Trim(' ');
+                result.BIOS.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                result.BIOS.SMBIOSVersion = queryObj["SMBIOSBIOSVersion"].ToString().Trim(' ');
+            }
+
+            wmiquery = new ObjectQuery("SELECT * FROM Win32_ComputerSystemProduct");
+            searcher = new ManagementObjectSearcher(scope, wmiquery);
+            coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                result.Model = queryObj["Version"].ToString().Trim(' ');
+                result.Manufacturer = queryObj["Vendor"].ToString().Trim(' ');
+                result.UUID = queryObj["UUID"].ToString().Trim(' ');
+                result.ProductNumber = queryObj["Name"].ToString().Trim(' ');
+            }
+
+            wmiquery = new ObjectQuery("SELECT * FROM Win32_SystemEnclosure");
+            searcher = new ManagementObjectSearcher(scope, wmiquery);
+            coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                result.Chassis.CaseType = ((ushort[])queryObj["ChassisTypes"])[0].ToString().Trim(' ');
+                result.Chassis.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                result.Chassis.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                result.Chassis.AssetTag = queryObj["SMBIOSAssetTag"].ToString().Trim(' ');
+            }
+
+            wmiquery = new ObjectQuery("SELECT * FROM Win32_BaseBoard");
+            searcher = new ManagementObjectSearcher(scope, wmiquery);
+            coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                result.Motherboard.Name = queryObj["Product"].ToString().Trim(' ');
+                result.Motherboard.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                result.Motherboard.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                result.Motherboard.Version = queryObj["Version"].ToString().Trim(' ');
             }
 
             return result;

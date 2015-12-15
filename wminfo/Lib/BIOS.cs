@@ -13,5 +13,10 @@ namespace wminfo.Lib
         public string ReleaseDate;
         public string SMBIOSVersion;
         public string SerialNumber;
+
+        public BIOS()
+        {
+
+        }
     }
 }

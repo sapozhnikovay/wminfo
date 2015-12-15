@@ -12,5 +12,10 @@ namespace wminfo.Lib
         public string CaseType = "";
         public string SerialNumber = "";
         public string AssetTag = "";
+
+        public Chassis()
+        {
+
+        }
     }
 }
