@@ -18,6 +18,9 @@ namespace wminfo.Lib
         public Memory Memory;
         public List<VideoController> VideoControllers;
         public ComputerSystem ComputerSystem;
+        public List<HardDrive> HardDrives;
+        public List<CDDrive> CDDrives;
+        public List<LogicalVolume> LogicalVolumes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Computer" /> class.
@@ -29,6 +32,9 @@ namespace wminfo.Lib
             Processors = new List<Processor>();
             CacheMemory = new List<CacheMemory>();
             VideoControllers = new List<VideoController>();
+            HardDrives = new List<HardDrive>();
+            CDDrives = new List<CDDrive>();
+            LogicalVolumes = new List<LogicalVolume>();
         }
 
         public string ToTxt()

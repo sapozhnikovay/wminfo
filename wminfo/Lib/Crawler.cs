@@ -29,6 +29,11 @@ namespace wminfo.Lib
             if (categories.Contains("ram")) result.Memory = Get_Memory(scope);
             if (categories.Contains("video")) result.VideoControllers = Get_VideoControllers(scope);
             if (categories.Contains("mb")) result.ComputerSystem = Get_ComputerSystem(scope);
+            if (categories.Contains("storage")) {
+                result.HardDrives = Get_HardDrives(scope);
+                result.CDDrives = Get_CDDrives(scope);
+                result.LogicalVolumes = Get_LogicalVolumes(scope);
+            }
 
             return result;
         }
@@ -277,6 +282,79 @@ namespace wminfo.Lib
                 result.Motherboard.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
                 result.Motherboard.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
                 result.Motherboard.Version = queryObj["Version"].ToString().Trim(' ');
+            }
+
+            return result;
+        }
+
+        public static List<HardDrive> Get_HardDrives(ManagementScope scope)
+        {
+            List<HardDrive> result = new List<HardDrive>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_DiskDrive");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var cp = new HardDrive();
+                cp.Model = queryObj["Model"].ToString().Trim(' ');
+                cp.InterfaceType = queryObj["InterfaceType"].ToString().Trim(' ');
+                cp.MediaType = queryObj["MediaType"].ToString().Trim(' ');
+                cp.Size = ((int)(Convert.ToInt64(queryObj["Size"].ToString().Trim(' ')) / 1000 / 1000 / 1000)).ToString();
+                cp.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                cp.FirmwareRevision = queryObj["FirmwareRevision"].ToString().Trim(' ');
+                result.Add(cp);
+            }
+
+            return result;
+        }
+
+        public static List<CDDrive> Get_CDDrives(ManagementScope scope)
+        {
+            List<CDDrive> result = new List<CDDrive>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_CDROMDrive");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var cp = new CDDrive();
+                cp.Model = queryObj["Name"].ToString().Trim(' ');
+                cp.DiskLetter = queryObj["Drive"].ToString().Trim(' ');
+                cp.DriveType = queryObj["MediaType"].ToString().Trim(' ');
+                if (queryObj["SerialNumber"] != null) cp.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                result.Add(cp);
+            }
+
+            return result;
+        }
+
+        public static List<LogicalVolume> Get_LogicalVolumes(ManagementScope scope)
+        {
+            List<LogicalVolume> result = new List<LogicalVolume>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_LogicalDisk");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var cp = new LogicalVolume();
+                cp.Description = queryObj["Description"].ToString().Trim(' ');
+                cp.MediaType = queryObj["MediaType"].ToString().Trim(' ');
+                cp.DriveType = queryObj["DriveType"].ToString().Trim(' ');
+                cp.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["FileSystem"] != null) cp.FileSystem = queryObj["FileSystem"].ToString().Trim(' ');
+                if (queryObj["Size"] != null) cp.Size = (int)(Convert.ToInt64(queryObj["Size"].ToString().Trim(' ')) / 1024 / 1024 / 1024);
+                if (queryObj["FreeSpace"] != null) cp.Free = (int)(Convert.ToInt64(queryObj["FreeSpace"].ToString().Trim(' ')) / 1024 / 1024 / 1024);
+                cp.Used = cp.Size - cp.Free;
+                if (queryObj["VolumeName"] != null) cp.VolumeLabel = queryObj["VolumeName"].ToString().Trim(' ');
+                if (queryObj["VolumeSerialNumber"] != null) cp.SerialNumber = queryObj["VolumeSerialNumber"].ToString().Trim(' ');
+                if (queryObj["MaximumComponentLength"] != null) cp.MaxComponentLength = queryObj["MaximumComponentLength"].ToString().Trim(' ');
+                if (queryObj["SupportsDiskQuotas"] != null) cp.SuportDiskQuotas = queryObj["SupportsDiskQuotas"].ToString().Trim(' ');
+                if (queryObj["SupportsFileBasedCompression"] != null) cp.SupportFilebasedCompression = queryObj["SupportsFileBasedCompression"].ToString().Trim(' ');
+                if (queryObj["Compressed"] != null) cp.Compressed = queryObj["Compressed"].ToString().Trim(' ');
+                if (queryObj["ProviderName"] != null) cp.SerialNumber = queryObj["ProviderName"].ToString().Trim(' ');
+                result.Add(cp);
             }
 
             return result;
