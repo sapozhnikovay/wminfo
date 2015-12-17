@@ -22,7 +22,7 @@
     <AssemblyVersionSettings>None.None.Increment.TimeStamp</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>None.None.Increment.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>None.None.Increment.TimeStamp</AssemblyInfoVersionSettings>
-    <AssemblyVersion>0.0.120.1428</AssemblyVersion>
+    <AssemblyVersion>0.0.131.0656</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -91,8 +91,11 @@
     <Compile Include="Lib\Memory.cs" />
     <Compile Include="Lib\MemoryModule.cs" />
     <Compile Include="Lib\Motherboard.cs" />
+    <Compile Include="Lib\NetworkAdapter.cs" />
     <Compile Include="Lib\OperatingSystem.cs" />
+    <Compile Include="Lib\PnPDevice.cs" />
     <Compile Include="Lib\Processor.cs" />
+    <Compile Include="Lib\SoundDevice.cs" />
     <Compile Include="Lib\VideoController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

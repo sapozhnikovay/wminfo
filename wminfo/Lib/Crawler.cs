@@ -34,6 +34,9 @@ namespace wminfo.Lib
                 result.CDDrives = Get_CDDrives(scope);
                 result.LogicalVolumes = Get_LogicalVolumes(scope);
             }
+            if (categories.Contains("devices")) result.PnPDevices = Get_PnPDevices(scope);
+            if (categories.Contains("network")) result.NetworkAdapters = Get_NetworkAdapters(scope);
+            if (categories.Contains("audio")) result.SoundDevices = Get_SoundDevices(scope);
 
             return result;
         }
@@ -354,6 +357,88 @@ namespace wminfo.Lib
                 if (queryObj["SupportsFileBasedCompression"] != null) cp.SupportFilebasedCompression = queryObj["SupportsFileBasedCompression"].ToString().Trim(' ');
                 if (queryObj["Compressed"] != null) cp.Compressed = queryObj["Compressed"].ToString().Trim(' ');
                 if (queryObj["ProviderName"] != null) cp.SerialNumber = queryObj["ProviderName"].ToString().Trim(' ');
+                result.Add(cp);
+            }
+
+            return result;
+        }
+
+        public static List<PnPDevice> Get_PnPDevices(ManagementScope scope)
+        {
+            List<PnPDevice> result = new List<PnPDevice>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_PnPEntity");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var cp = new PnPDevice();
+                if (queryObj["ClassGuid"] != null) cp.ClassGUID = queryObj["ClassGuid"].ToString().Trim(' ');
+                if (queryObj["Manufacturer"] != null) cp.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["PnPDeviceID"] != null) cp.PnPDeviceID = queryObj["PnPDeviceID"].ToString().Trim(' ');
+                if (queryObj["Name"] != null) cp.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["ConfigManagerErrorCode"] != null) cp.ErrorCode = queryObj["ConfigManagerErrorCode"].ToString().Trim(' ');
+                result.Add(cp);
+            }
+
+            return result;
+        }
+
+        public static List<NetworkAdapter> Get_NetworkAdapters(ManagementScope scope)
+        {
+            List<NetworkAdapter> result = new List<NetworkAdapter>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_NetworkAdapter WHERE PhysicalAdapter = True");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var cp = new NetworkAdapter();
+                if (queryObj["Name"] != null) cp.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Manufacturer"] != null) cp.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["ConfigManagerErrorCode"] != null) cp.ErrorCode = queryObj["ConfigManagerErrorCode"].ToString().Trim(' ');
+                if (queryObj["MACAddress"] != null) cp.MACAddress = queryObj["MACAddress"].ToString().Trim(' ');
+                if (queryObj["AdapterType"] != null) cp.AdapterType = queryObj["AdapterType"].ToString().Trim(' ');
+                if (queryObj["NetConnectionID"] != null) cp.NetConnectionID = queryObj["NetConnectionID"].ToString().Trim(' ');
+                if (queryObj["NetConnectionStatus"] != null) cp.NetConnectionStatus = queryObj["NetConnectionStatus"].ToString().Trim(' ');
+                if (queryObj["Speed"] != null) cp.Speed = queryObj["Speed"].ToString().Trim(' ');
+                if (queryObj["Availability"] != null) cp.Availability = queryObj["Availability"].ToString().Trim(' ');
+                var index = queryObj["DeviceID"];
+                ObjectQuery wmiquery2 = new ObjectQuery("SELECT * FROM Win32_NetworkAdapterConfiguration WHERE Index = " + index);
+                ManagementObjectSearcher searcher2 = new ManagementObjectSearcher(scope, wmiquery2);
+                ManagementObjectCollection coll2 = searcher2.Get();
+                foreach (ManagementObject queryObj2 in coll2)
+                {
+                    if (queryObj2["IPAddress"] != null) cp.IPAddress = string.Join(", ", ((string[])queryObj2["IPAddress"]));
+                    if (queryObj2["IPSubnet"] != null) cp.IPSubnet = string.Join(", ", ((string[])queryObj2["IPSubnet"]));
+                    if (queryObj2["DefaultIPGateway"] != null) cp.DefaultIPGateway = string.Join(", ", ((string[])queryObj2["DefaultIPGateway"]));
+                    if (queryObj2["DNSServerSearchOrder"] != null) cp.DNSServerOrder = string.Join(", ",((string[])queryObj2["DNSServerSearchOrder"]));
+                    if (queryObj2["DHCPEnabled"] != null) cp.DHCPEnabled = queryObj2["DHCPEnabled"].ToString().Trim(' ');
+                    if (queryObj2["DHCPServer"] != null) cp.DHCPServerName = queryObj2["DHCPServer"].ToString().Trim(' ');
+                    if (queryObj2["DNSDomain"] != null) cp.DNSDomain = queryObj2["DNSDomain"].ToString().Trim(' ');
+                    if (queryObj2["DNSHostName"] != null) cp.DNSHostName = queryObj2["DNSHostName"].ToString().Trim(' ');
+                    if (queryObj2["TcpipNetbiosOptions"] != null) cp.NetBIOSParameters = queryObj2["TcpipNetbiosOptions"].ToString().Trim(' ');
+                    if (queryObj2["IPFilterSecurityEnabled"] != null) cp.IPFilterEnabled = queryObj2["IPFilterSecurityEnabled"].ToString().Trim(' ');
+                }
+                result.Add(cp);
+            }
+
+            return result;
+        }
+
+        public static List<SoundDevice> Get_SoundDevices(ManagementScope scope)
+        {
+            List<SoundDevice> result = new List<SoundDevice>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_SoundDevice");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var cp = new SoundDevice();
+                if (queryObj["Name"] != null) cp.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Manufacturer"] != null) cp.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["ConfigManagerErrorCode"] != null) cp.ErrorCode = queryObj["ConfigManagerErrorCode"].ToString().Trim(' ');
                 result.Add(cp);
             }
 

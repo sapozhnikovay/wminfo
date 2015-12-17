@@ -21,6 +21,9 @@ namespace wminfo.Lib
         public List<HardDrive> HardDrives;
         public List<CDDrive> CDDrives;
         public List<LogicalVolume> LogicalVolumes;
+        public List<PnPDevice> PnPDevices;
+        public List<NetworkAdapter> NetworkAdapters;
+        public List<SoundDevice> SoundDevices;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Computer" /> class.
@@ -35,6 +38,9 @@ namespace wminfo.Lib
             HardDrives = new List<HardDrive>();
             CDDrives = new List<CDDrive>();
             LogicalVolumes = new List<LogicalVolume>();
+            PnPDevices = new List<PnPDevice>();
+            NetworkAdapters = new List<NetworkAdapter>();
+            SoundDevices = new List<SoundDevice>();
         }
 
         public string ToTxt()
