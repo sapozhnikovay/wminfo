@@ -23,5 +23,21 @@ namespace wminfo.Lib
         {
 
         }
+
+        public string ToTxt()
+        {
+            string result = "";
+            result += "\n" + Model;
+            result += "\n--------------------\n";
+
+            foreach (var propertyInfo in this.GetType().GetFields())
+            {
+                string name = propertyInfo.Name.PadRight(30);
+                string value = propertyInfo.GetValue(this).ToString();
+                result += name + " - " + value + "\n";
+            }
+
+            return result;
+        }
     }
 }

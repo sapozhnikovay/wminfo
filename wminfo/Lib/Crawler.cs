@@ -10,7 +10,7 @@ namespace wminfo.Lib
     static class Crawler
     {
         public static Computer GetInfo(string targetHost, string username, string password, string[] categories)
-        {
+        { 
             Computer result = new Computer();
             if (targetHost == null) return null;
             ConnectionOptions options = new ConnectionOptions();
@@ -21,24 +21,61 @@ namespace wminfo.Lib
             }
             ManagementScope scope = new ManagementScope("\\\\" + targetHost + "\\root\\CIMV2",options);
             scope.Connect();
-
-            if(categories.Contains("os")) result.OperatingSystems = Get_OperatingSystems(scope);
-            if (categories.Contains("software")) result.SoftwareProducts = Get_SoftwareProducts(scope);
-            if (categories.Contains("processor")) result.Processors = Get_Processors(scope);
-            if (categories.Contains("cachememory")) result.CacheMemory = Get_CacheMemory(scope);
-            if (categories.Contains("ram")) result.Memory = Get_Memory(scope);
-            if (categories.Contains("video")) result.VideoControllers = Get_VideoControllers(scope);
-            if (categories.Contains("mb")) result.ComputerSystem = Get_ComputerSystem(scope);
-            if (categories.Contains("storage")) {
+            if (categories != null)
+            {
+                if (categories.Contains("os")) result.OperatingSystems = Get_OperatingSystems(scope);
+                if (categories.Contains("software")) result.SoftwareProducts = Get_SoftwareProducts(scope);
+                if (categories.Contains("cpu"))
+                {
+                    result.Processors = Get_Processors(scope);
+                    result.CacheMemory = Get_CacheMemory(scope);
+                }
+                if (categories.Contains("ram")) result.Memory = Get_Memory(scope);
+                if (categories.Contains("video")) result.VideoControllers = Get_VideoControllers(scope);
+                if (categories.Contains("mb")) result.ComputerSystem = Get_ComputerSystem(scope);
+                if (categories.Contains("storage"))
+                {
+                    result.HardDrives = Get_HardDrives(scope);
+                    result.CDDrives = Get_CDDrives(scope);
+                    result.LogicalVolumes = Get_LogicalVolumes(scope);
+                }
+                if (categories.Contains("devices")) result.PnPDevices = Get_PnPDevices(scope);
+                if (categories.Contains("network")) result.NetworkAdapters = Get_NetworkAdapters(scope);
+                if (categories.Contains("audio")) result.SoundDevices = Get_SoundDevices(scope);
+                if (categories.Contains("monitor")) result.Monitors = Get_Monitors(scope);
+            }
+            else
+            {
+                result.OperatingSystems = Get_OperatingSystems(scope);
+                result.SoftwareProducts = Get_SoftwareProducts(scope);
+                result.Processors = Get_Processors(scope);
+                result.CacheMemory = Get_CacheMemory(scope);
+                result.Memory = Get_Memory(scope);
+                result.VideoControllers = Get_VideoControllers(scope);
+                result.ComputerSystem = Get_ComputerSystem(scope);
                 result.HardDrives = Get_HardDrives(scope);
                 result.CDDrives = Get_CDDrives(scope);
                 result.LogicalVolumes = Get_LogicalVolumes(scope);
+                result.PnPDevices = Get_PnPDevices(scope);
+                result.NetworkAdapters = Get_NetworkAdapters(scope);
+                result.SoundDevices = Get_SoundDevices(scope);
+                result.Monitors = Get_Monitors(scope);
             }
-            if (categories.Contains("devices")) result.PnPDevices = Get_PnPDevices(scope);
-            if (categories.Contains("network")) result.NetworkAdapters = Get_NetworkAdapters(scope);
-            if (categories.Contains("audio")) result.SoundDevices = Get_SoundDevices(scope);
-
             return result;
+        }
+
+        static int GCD(int a, int b)
+        {
+            int Remainder;
+
+            while (b != 0)
+            {
+                Remainder = a % b;
+                a = b;
+                b = Remainder;
+            }
+
+            return a;
         }
 
         public static List<OperatingSystem> Get_OperatingSystems(ManagementScope scope)
@@ -164,8 +201,8 @@ namespace wminfo.Lib
             ManagementObjectCollection coll = searcher.Get();
             foreach (ManagementObject queryObj in coll)
             {
-                result.PagefileSizeActual = Convert.ToInt32(queryObj["CurrentUsage"].ToString().Trim(' '));
-                result.PagefileSizeMaximum = Convert.ToInt32(queryObj["AllocatedBaseSize"].ToString().Trim(' '));
+                if (queryObj["CurrentUsage"] != null) result.PagefileSizeActual = Convert.ToInt32(queryObj["CurrentUsage"].ToString().Trim(' '));
+                if (queryObj["AllocatedBaseSize"] != null) result.PagefileSizeMaximum = Convert.ToInt32(queryObj["AllocatedBaseSize"].ToString().Trim(' '));
             }
 
             wmiquery = new ObjectQuery("SELECT * FROM Win32_OperatingSystem");
@@ -173,9 +210,9 @@ namespace wminfo.Lib
             coll = searcher.Get();
             foreach (ManagementObject queryObj in coll)
             {
-                result.VirtualMemorySize = Convert.ToInt32(queryObj["TotalVirtualMemorySize"].ToString().Trim(' '));
-                result.TotalVisibleMemorySize = Convert.ToInt32(queryObj["TotalVisibleMemorySize"].ToString().Trim(' '))/1024;
-                result.FreeMemorySize = Convert.ToInt32(queryObj["FreePhysicalMemory"].ToString().Trim(' '))/1024;
+                if (queryObj["TotalVirtualMemorySize"] != null) result.VirtualMemorySize = Convert.ToInt32(queryObj["TotalVirtualMemorySize"].ToString().Trim(' ')) / 1024;
+                if (queryObj["TotalVisibleMemorySize"] != null) result.TotalVisibleMemorySize = Convert.ToInt32(queryObj["TotalVisibleMemorySize"].ToString().Trim(' '))/1024;
+                if (queryObj["FreePhysicalMemory"] != null) result.FreeMemorySize = Convert.ToInt32(queryObj["FreePhysicalMemory"].ToString().Trim(' '))/1024;
             }
 
             wmiquery = new ObjectQuery("SELECT * FROM Win32_ComputerSystem");
@@ -183,10 +220,10 @@ namespace wminfo.Lib
             coll = searcher.Get();
             foreach (ManagementObject queryObj in coll)
             {
-                result.PhysicalMemorySize = (int)(Convert.ToInt64(queryObj["TotalPhysicalMemory"].ToString().Trim(' '))/1024/1024); //Нужно переделать. Не точное число физической памяти.
+                if (queryObj["TotalPhysicalMemory"] != null) result.PhysicalMemorySize = (int)(Convert.ToInt64(queryObj["TotalPhysicalMemory"].ToString().Trim(' '))/1024/1024); //Нужно переделать. Не точное число физической памяти.
             }
 
-            result.MemoryLoadPercentage = (int)((float)((float)result.PhysicalMemorySize / (float)result.FreeMemorySize) * 10);
+            result.MemoryLoadPercentage = 100 - (int)((float)((float)result.PhysicalMemorySize / (float)result.FreeMemorySize) * 10);
             
             wmiquery = new ObjectQuery("SELECT * FROM Win32_PhysicalMemory");
             searcher = new ManagementObjectSearcher(scope, wmiquery);
@@ -194,15 +231,15 @@ namespace wminfo.Lib
             foreach (ManagementObject queryObj in coll)
             {
                 MemoryModule mm = new MemoryModule();
-                mm.Capacity = (int)(Convert.ToInt64(queryObj["Capacity"].ToString().Trim(' ')) / 1024 / 1024);
-                mm.BankLabel = queryObj["BankLabel"].ToString().Trim(' ');
-                mm.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["Capacity"] != null) mm.Capacity = (int)(Convert.ToInt64(queryObj["Capacity"].ToString().Trim(' ')) / 1024 / 1024);
+                if (queryObj["BankLabel"] != null) mm.BankLabel = queryObj["BankLabel"].ToString().Trim(' ');
+                if (queryObj["Manufacturer"] != null) mm.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
                 if (queryObj["InstallDate"] != null) mm.ManufactureDate = queryObj["InstallDate"].ToString().Trim(' ');
-                mm.MemoryType = queryObj["MemoryType"].ToString().Trim(' ');
-                mm.FormFactor = queryObj["FormFactor"].ToString().Trim(' ');
-                mm.PartNumber = queryObj["PartNumber"].ToString().Trim(' ');
-                mm.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
-                mm.Speed = queryObj["Speed"].ToString().Trim(' ');
+                if (queryObj["MemoryType"] != null) mm.MemoryType = queryObj["MemoryType"].ToString().Trim(' ');
+                if (queryObj["FormFactor"] != null) mm.FormFactor = queryObj["FormFactor"].ToString().Trim(' ');
+                if (queryObj["PartNumber"] != null) mm.PartNumber = queryObj["PartNumber"].ToString().Trim(' ');
+                if (queryObj["SerialNumber"] != null) mm.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                if (queryObj["Speed"] != null) mm.Speed = queryObj["Speed"].ToString().Trim(' ');
                 result.MemoryModules.Add(mm);
             }
 
@@ -220,18 +257,18 @@ namespace wminfo.Lib
             foreach (ManagementObject queryObj in coll)
             {
                 var cp = new VideoController();
-                cp.Availability = queryObj["Availability"].ToString().Trim(' ');
-                cp.InstalledVideoRAM = queryObj["AdapterRAM"].ToString().Trim(' ');
-                cp.DACType = queryObj["AdapterDACType"].ToString().Trim(' ');
-                cp.AdapterFamily = queryObj["AdapterCompatibility"].ToString().Trim(' ');
-                cp.AdapterName = queryObj["Name"].ToString().Trim(' ');
-                cp.ScanMode = queryObj["CurrentScanMode"].ToString().Trim(' ');
-                cp.VideoArchitecture = queryObj["VideoArchitecture"].ToString().Trim(' ');
-                cp.VideoMemoryType = queryObj["VideoMemoryType"].ToString().Trim(' ');
+                if (queryObj["Availability"] != null) cp.Availability = queryObj["Availability"].ToString().Trim(' ');
+                if (queryObj["AdapterRAM"] != null) cp.InstalledVideoRAM = queryObj["AdapterRAM"].ToString().Trim(' ');
+                if (queryObj["AdapterDACType"] != null) cp.DACType = queryObj["AdapterDACType"].ToString().Trim(' ');
+                if (queryObj["AdapterCompatibility"] != null) cp.AdapterFamily = queryObj["AdapterCompatibility"].ToString().Trim(' ');
+                if (queryObj["Name"] != null) cp.AdapterName = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["CurrentScanMode"] != null) cp.ScanMode = queryObj["CurrentScanMode"].ToString().Trim(' ');
+                if (queryObj["VideoArchitecture"] != null) cp.VideoArchitecture = queryObj["VideoArchitecture"].ToString().Trim(' ');
+                if (queryObj["VideoMemoryType"] != null) cp.VideoMemoryType = queryObj["VideoMemoryType"].ToString().Trim(' ');
                 cp.CurrentVideoMode = queryObj["CurrentHorizontalResolution"].ToString().Trim(' ') + " x " + queryObj["CurrentVerticalResolution"].ToString().Trim(' ') + " x " + queryObj["CurrentBitsPerPixel"].ToString().Trim(' ') + "bpp x " + queryObj["CurrentRefreshRate"].ToString().Trim(' ') + " Hz";
-                cp.DisplayDrivers = queryObj["InstalledDisplayDrivers"].ToString().Trim(' ');
-                cp.DriverVersion = queryObj["DriverVersion"].ToString().Trim(' ');
-                cp.DriverDate = queryObj["DriverDate"].ToString().Trim(' ');
+                if (queryObj["InstalledDisplayDrivers"] != null) cp.DisplayDrivers = queryObj["InstalledDisplayDrivers"].ToString().Trim(' ');
+                if (queryObj["DriverVersion"] != null) cp.DriverVersion = queryObj["DriverVersion"].ToString().Trim(' ');
+                if (queryObj["DriverDate"] != null) cp.DriverDate = queryObj["DriverDate"].ToString().Trim(' ');
                 result.Add(cp);
             }
 
@@ -247,11 +284,11 @@ namespace wminfo.Lib
             ManagementObjectCollection coll = searcher.Get();
             foreach (ManagementObject queryObj in coll)
             {
-                result.BIOS.Name = queryObj["Name"].ToString().Trim(' ');
-                result.BIOS.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
-                result.BIOS.ReleaseDate = queryObj["ReleaseDate"].ToString().Trim(' ');
-                result.BIOS.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
-                result.BIOS.SMBIOSVersion = queryObj["SMBIOSBIOSVersion"].ToString().Trim(' ');
+                if (queryObj["Name"] != null) result.BIOS.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Manufacturer"] != null) result.BIOS.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["ReleaseDate"] != null) result.BIOS.ReleaseDate = queryObj["ReleaseDate"].ToString().Trim(' ');
+                if (queryObj["SerialNumber"] != null) result.BIOS.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                if (queryObj["SMBIOSBIOSVersion"] != null) result.BIOS.SMBIOSVersion = queryObj["SMBIOSBIOSVersion"].ToString().Trim(' ');
             }
 
             wmiquery = new ObjectQuery("SELECT * FROM Win32_ComputerSystemProduct");
@@ -259,10 +296,10 @@ namespace wminfo.Lib
             coll = searcher.Get();
             foreach (ManagementObject queryObj in coll)
             {
-                result.Model = queryObj["Version"].ToString().Trim(' ');
-                result.Manufacturer = queryObj["Vendor"].ToString().Trim(' ');
-                result.UUID = queryObj["UUID"].ToString().Trim(' ');
-                result.ProductNumber = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Version"] != null) result.Model = queryObj["Version"].ToString().Trim(' ');
+                if (queryObj["Vendor"] != null) result.Manufacturer = queryObj["Vendor"].ToString().Trim(' ');
+                if (queryObj["UUID"] != null) result.UUID = queryObj["UUID"].ToString().Trim(' ');
+                if (queryObj["Name"] != null) result.ProductNumber = queryObj["Name"].ToString().Trim(' ');
             }
 
             wmiquery = new ObjectQuery("SELECT * FROM Win32_SystemEnclosure");
@@ -270,10 +307,10 @@ namespace wminfo.Lib
             coll = searcher.Get();
             foreach (ManagementObject queryObj in coll)
             {
-                result.Chassis.CaseType = ((ushort[])queryObj["ChassisTypes"])[0].ToString().Trim(' ');
-                result.Chassis.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
-                result.Chassis.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
-                result.Chassis.AssetTag = queryObj["SMBIOSAssetTag"].ToString().Trim(' ');
+                if (queryObj["ChassisTypes"] != null) result.Chassis.CaseType = ((ushort[])queryObj["ChassisTypes"])[0].ToString().Trim(' ');
+                if (queryObj["Manufacturer"] != null) result.Chassis.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["SerialNumber"] != null) result.Chassis.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                if (queryObj["SMBIOSAssetTag"] != null) result.Chassis.AssetTag = queryObj["SMBIOSAssetTag"].ToString().Trim(' ');
             }
 
             wmiquery = new ObjectQuery("SELECT * FROM Win32_BaseBoard");
@@ -281,10 +318,22 @@ namespace wminfo.Lib
             coll = searcher.Get();
             foreach (ManagementObject queryObj in coll)
             {
-                result.Motherboard.Name = queryObj["Product"].ToString().Trim(' ');
-                result.Motherboard.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
-                result.Motherboard.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
-                result.Motherboard.Version = queryObj["Version"].ToString().Trim(' ');
+                if (queryObj["Product"] != null) result.Motherboard.Name = queryObj["Product"].ToString().Trim(' ');
+                if (queryObj["Manufacturer"] != null) result.Motherboard.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["SerialNumber"] != null) result.Motherboard.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                if (queryObj["Version"] != null) result.Motherboard.Version = queryObj["Version"].ToString().Trim(' ');
+            }
+
+            wmiquery = new ObjectQuery("SELECT * FROM Win32_PortConnector");
+            searcher = new ManagementObjectSearcher(scope, wmiquery);
+            coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                SystemPort p = new SystemPort();
+                if (queryObj["ExternalReferenceDesignator"] != null) p.Name = queryObj["ExternalReferenceDesignator"].ToString().Trim(' ');
+                if (queryObj["PortType"] != null) p.PortType = queryObj["PortType"].ToString().Trim(' ');
+                if (queryObj["ConnectorType"] != null) p.ConnectorType = ((ushort[])queryObj["ConnectorType"])[0].ToString().Trim(' ');
+                result.SystemPorts.Add(p);
             }
 
             return result;
@@ -300,12 +349,12 @@ namespace wminfo.Lib
             foreach (ManagementObject queryObj in coll)
             {
                 var cp = new HardDrive();
-                cp.Model = queryObj["Model"].ToString().Trim(' ');
-                cp.InterfaceType = queryObj["InterfaceType"].ToString().Trim(' ');
-                cp.MediaType = queryObj["MediaType"].ToString().Trim(' ');
-                cp.Size = ((int)(Convert.ToInt64(queryObj["Size"].ToString().Trim(' ')) / 1000 / 1000 / 1000)).ToString();
-                cp.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
-                cp.FirmwareRevision = queryObj["FirmwareRevision"].ToString().Trim(' ');
+                if (queryObj["Model"] != null) cp.Model = queryObj["Model"].ToString().Trim(' ');
+                if (queryObj["InterfaceType"] != null) cp.InterfaceType = queryObj["InterfaceType"].ToString().Trim(' ');
+                if (queryObj["MediaType"] != null) cp.MediaType = queryObj["MediaType"].ToString().Trim(' ');
+                if (queryObj["Size"] != null) cp.Size = ((int)(Convert.ToInt64(queryObj["Size"].ToString().Trim(' ')) / 1000 / 1000 / 1000)).ToString();
+                if (queryObj["SerialNumber"] != null) cp.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
+                if (queryObj["FirmwareRevision"] != null) cp.FirmwareRevision = queryObj["FirmwareRevision"].ToString().Trim(' ');
                 result.Add(cp);
             }
 
@@ -322,9 +371,9 @@ namespace wminfo.Lib
             foreach (ManagementObject queryObj in coll)
             {
                 var cp = new CDDrive();
-                cp.Model = queryObj["Name"].ToString().Trim(' ');
-                cp.DiskLetter = queryObj["Drive"].ToString().Trim(' ');
-                cp.DriveType = queryObj["MediaType"].ToString().Trim(' ');
+                if (queryObj["Name"] != null) cp.Model = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Drive"] != null) cp.DiskLetter = queryObj["Drive"].ToString().Trim(' ');
+                if (queryObj["MediaType"] != null) cp.DriveType = queryObj["MediaType"].ToString().Trim(' ');
                 if (queryObj["SerialNumber"] != null) cp.SerialNumber = queryObj["SerialNumber"].ToString().Trim(' ');
                 result.Add(cp);
             }
@@ -342,10 +391,10 @@ namespace wminfo.Lib
             foreach (ManagementObject queryObj in coll)
             {
                 var cp = new LogicalVolume();
-                cp.Description = queryObj["Description"].ToString().Trim(' ');
-                cp.MediaType = queryObj["MediaType"].ToString().Trim(' ');
-                cp.DriveType = queryObj["DriveType"].ToString().Trim(' ');
-                cp.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Description"] != null) cp.Description = queryObj["Description"].ToString().Trim(' ');
+                if (queryObj["MediaType"] != null) cp.MediaType = queryObj["MediaType"].ToString().Trim(' ');
+                if (queryObj["DriveType"] != null) cp.DriveType = queryObj["DriveType"].ToString().Trim(' ');
+                if (queryObj["Name"] != null) cp.Name = queryObj["Name"].ToString().Trim(' ');
                 if (queryObj["FileSystem"] != null) cp.FileSystem = queryObj["FileSystem"].ToString().Trim(' ');
                 if (queryObj["Size"] != null) cp.Size = (int)(Convert.ToInt64(queryObj["Size"].ToString().Trim(' ')) / 1024 / 1024 / 1024);
                 if (queryObj["FreeSpace"] != null) cp.Free = (int)(Convert.ToInt64(queryObj["FreeSpace"].ToString().Trim(' ')) / 1024 / 1024 / 1024);
@@ -440,6 +489,112 @@ namespace wminfo.Lib
                 if (queryObj["Manufacturer"] != null) cp.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
                 if (queryObj["ConfigManagerErrorCode"] != null) cp.ErrorCode = queryObj["ConfigManagerErrorCode"].ToString().Trim(' ');
                 result.Add(cp);
+            }
+
+            return result;
+        }
+
+        public static List<Monitor> Get_Monitors(ManagementScope scope)
+        {
+            List<Monitor> result = new List<Monitor>();
+            
+            //Get monitor value
+            string softwareRegLoc = @"SYSTEM\CurrentControlSet\Enum\DISPLAY";
+
+            ManagementClass registry = new ManagementClass(scope, new ManagementPath("StdRegProv"), null);
+            ManagementBaseObject inParams = registry.GetMethodParameters("EnumKey");
+            inParams["hDefKey"] = 0x80000002;//HKEY_LOCAL_MACHINE
+            inParams["sSubKeyName"] = softwareRegLoc;
+
+            // Read Registry Key Names 
+            ManagementBaseObject outParams = registry.InvokeMethod("EnumKey", inParams, null);
+            string[] monitorIDs = outParams["sNames"] as string[];
+
+            foreach (string subKeyName in monitorIDs)
+            {
+                Monitor mon = new Monitor();
+                mon.MonitorID = subKeyName;
+                inParams = registry.GetMethodParameters("GetStringValue");
+                inParams["hDefKey"] = 0x80000002;//HKEY_LOCAL_MACHINE
+                inParams["sSubKeyName"] = softwareRegLoc + @"\" + subKeyName;
+                // Read Registry Value 
+                outParams = registry.InvokeMethod("EnumKey", inParams, null);
+                string[] pnpIDs = outParams["sNames"] as string[];
+                foreach (string pnpID in pnpIDs)
+                {
+                    inParams = registry.GetMethodParameters("GetStringValue");
+                    inParams["hDefKey"] = 0x80000002;//HKEY_LOCAL_MACHINE
+                    inParams["sSubKeyName"] = softwareRegLoc + @"\" + subKeyName + "\\" + pnpID;
+                    // Read Registry Value 
+                    outParams = registry.InvokeMethod("EnumKey", inParams, null);
+                    string[] controls = outParams["sNames"] as string[];
+                    if (controls.Contains("Control"))
+                    {
+                        inParams = registry.GetMethodParameters("GetBinaryValue");
+                        inParams["hDefKey"] = 0x80000002;//HKEY_LOCAL_MACHINE
+                        inParams["sSubKeyName"] = softwareRegLoc + @"\" + subKeyName + "\\" + pnpID + "\\Device Parameters";
+                        inParams["sValueName"] = "EDID";
+                        // Read Registry Value 
+                        outParams = registry.InvokeMethod("GetBinaryValue", inParams, null);
+
+                        if (outParams.Properties["uValue"].Value != null)
+                        {
+                            byte[] bObj = (byte[])outParams.Properties["uValue"].Value;
+                            if (bObj != null)
+                            {
+                                //Get the 4 Vesa descriptor blocks
+                                string[] sDescriptor = new string[4];
+                                Encoding ANSI = Encoding.GetEncoding(1252);
+                                sDescriptor[0] = ANSI.GetString(bObj, 0x5A, 18);
+                                sDescriptor[1] = ANSI.GetString(bObj, 0x6C, 18);
+                                //Detect right section in EDID. Serial number and model section might be swapped
+                                if(bObj[93] == 255) //Serial number section start flag
+                                {
+                                    mon.SerialNumber = sDescriptor[0].Substring(5).Replace(@"\0\0\0y\0", "").Trim();
+                                }
+                                else
+                                {
+                                    mon.Model = sDescriptor[0].Substring(5).Replace(@"\0\0\0y\0", "").Trim();
+                                }
+                                if (bObj[111] == 252) //Model section start flag
+                                {
+                                    mon.Model = sDescriptor[1].Substring(5).Replace(@"\0\0\0y\0", "").Trim();
+                                }
+                                else
+                                {
+                                    mon.SerialNumber = sDescriptor[1].Substring(5).Replace(@"\0\0\0y\0", "").Trim();
+                                }
+                                // Get Manufacturer
+                                byte[] data2 = { bObj[09], bObj[08] };
+                                short word = BitConverter.ToInt16(data2, 0);
+                                short first = (short)(word >> 10);
+                                short third = (short)(word & (short)31);
+                                short second = (short)((word >> 5) & (short)31);
+                                byte[] name_data = { (byte)(first + 0x40), (byte)(second + 0x40), (byte)(third + 0x40) };
+                                string tmpval = "";
+                                mon.dict.TryGetValue(ANSI.GetString(name_data, 0, 3), out tmpval);
+                                mon.Manufacturer = tmpval;
+                                // Get other parameters
+                                byte type_data = (byte)(bObj[20] >> 7);
+                                if (type_data == 1) { mon.VideoInputType = "Digital"; } else { mon.VideoInputType = "Analog"; };
+                                byte[] hordata = { bObj[56], (byte)(bObj[58] >> 4) };
+                                short hor = BitConverter.ToInt16(hordata, 0);
+                                byte[] verdata = { bObj[59], (byte)(bObj[61] >> 4) };
+                                short ver = BitConverter.ToInt16(verdata, 0);
+                                mon.MaxResolution = hor.ToString() + " x " + ver.ToString();
+                                int inches = (int)Math.Ceiling((Math.Sqrt((bObj[21] * bObj[21]) + (bObj[22] * bObj[22])) / 2.54));
+                                mon.Dimensions = bObj[21] + "cm x " + bObj[22] + "cm (" + inches + "\")";
+                                mon.Gamma = 1 + ((double)bObj[23] / 100);
+                                mon.ManufactureDate = (1990 + bObj[17]) + " / " + bObj[16] + " week";
+                                int w = bObj[21];
+                                int h = bObj[22];
+                                mon.AspectRatio = string.Format("{0}:{1}", hor / GCD(hor, ver), ver / GCD(hor, ver));
+
+                                result.Add(mon);
+                            }
+                        }
+                    }
+                }
             }
 
             return result;

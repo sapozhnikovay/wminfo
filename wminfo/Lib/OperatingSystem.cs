@@ -19,8 +19,8 @@ namespace wminfo.Lib
         public string CountryCode; //+
         public string StandartTimeZone = "";
         public string CurrentTimeZone; //+
-        public bool DSTAutoadjust; // автопереход на летнее время
-        public bool DSTInEffect; // летнее время активно?
+        public bool DSTAutoadjust = false; // автопереход на летнее время
+        public bool DSTInEffect = false; // летнее время активно?
         public string EncryptionLevel; //+
         public string ForegroundApplicationBoost; //+
         public string InstallDate; //+

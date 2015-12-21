@@ -24,6 +24,7 @@ namespace wminfo.Lib
         public List<PnPDevice> PnPDevices;
         public List<NetworkAdapter> NetworkAdapters;
         public List<SoundDevice> SoundDevices;
+        public List<Monitor> Monitors;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Computer" /> class.
@@ -41,17 +42,20 @@ namespace wminfo.Lib
             PnPDevices = new List<PnPDevice>();
             NetworkAdapters = new List<NetworkAdapter>();
             SoundDevices = new List<SoundDevice>();
+            Monitors = new List<Monitor>();
         }
 
         public string ToTxt()
         {
             string result = "";
-            result += "Processors\n--------------------\n\n";
+            result += "Processors\n--------------------\n";
             foreach (Processor item in Processors)
             {
                 result += item.ToTxt();
             }
-            result += "Operating system\n--------------------\n\n";
+            result += "\nSystem details\n--------------------\n";
+            result += ComputerSystem.ToTxt();
+            result += "\n\nOperating system\n--------------------\n\n";
             foreach (OperatingSystem os in OperatingSystems)
             {
                 result += os.ToTxt();

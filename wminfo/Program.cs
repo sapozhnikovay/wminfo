@@ -60,28 +60,146 @@ namespace wminfo
             Environment.Exit(1);
         }
 
-        private static void Export(Computer data, string format, string outfile)
+        private static void Export(Computer data, string format, string outfile, string[] categories)
         {
             string outstr = "";
             switch (format)
             {
                 case "txt":
-                    outstr = data.ToTxt();
+                    outstr = ExportTxt(data, categories);
                     break;
 
                 case "csv":
-                    outstr = data.ToCsv();
+                    //outstr = data.ToCsv();
                     break;
             }
             if (outfile != null)
             {
-                // output to file
+                System.IO.StreamWriter file = new System.IO.StreamWriter(outfile);
+                file.WriteLine(outstr.Replace("\n", "\r\n"));
+
+                file.Close();
             }
             else
             {
                 Console.WriteLine(outstr);
                 // print to screen
             }
+        }
+
+        private static string ExportTxt(Computer data, string[] categories)
+        {
+            string result = "Inventory report for " + target;
+            bool all = false;
+
+            if(categories == null)
+            {
+                all = true;
+                categories = new string[] {};
+            }
+
+            if (categories.Contains("os") || all) {
+                result += "\n\nOperating system\n--------------------\n\n";
+                foreach (Lib.OperatingSystem os in data.OperatingSystems)
+                {
+                    result += os.ToTxt();
+                }
+            }
+            if (categories.Contains("mb") || all)
+            {
+                result += "\n\nSystem details\n--------------------\n";
+                result += data.ComputerSystem.ToTxt();
+            }
+
+            if (categories.Contains("software") || all)
+            {
+                result += "\n\nSoftware Products\n--------------------\n";
+                foreach (SoftwareProduct item in data.SoftwareProducts)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("cpu") || all)
+            {
+                result += "\n\nProcessor\n--------------------\n";
+                foreach (Processor item in data.Processors)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("ram") || all)
+            {
+                result += "\n\nSystem memory\n--------------------\n";
+                result += data.Memory.ToTxt();
+            }
+
+            if (categories.Contains("video") || all)
+            {
+                result += "\n\nVideo controllers\n--------------------\n";
+                foreach (VideoController item in data.VideoControllers)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("monitor") || all)
+            {
+                result += "\n\nMonitors\n--------------------\n";
+                foreach (Monitor item in data.Monitors)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("audio") || all)
+            {
+                result += "\n\nSound devices\n--------------------\n";
+                foreach (SoundDevice item in data.SoundDevices)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("devices") || all)
+            {
+                result += "\n\nDevices\n--------------------\n";
+                foreach (PnPDevice item in data.PnPDevices)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("network") || all)
+            {
+                result += "\n\nNetwork adapters\n--------------------\n";
+                foreach (NetworkAdapter item in data.NetworkAdapters)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("storage") || all)
+            {
+                result += "\n\nStorage details\n--------------------\n";
+                result += "\nPhysical disks\n--------------------\n";
+                foreach (HardDrive item in data.HardDrives)
+                {
+                    result += item.ToTxt();
+                }
+                foreach (CDDrive item in data.CDDrives)
+                {
+                    result += item.ToTxt();
+                }
+                result += "\nLogical disks\n--------------------\n";
+                foreach (LogicalVolume item in data.LogicalVolumes)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            return result;
         }
 
         private static int Main(string[] args)
@@ -96,10 +214,10 @@ namespace wminfo
             }
 
             var computer = Crawler.GetInfo(target, username, password, categories);
-            Export(computer, format, outFile);
+            Export(computer, format, outFile, categories);
 
-            Console.WriteLine("\n\nPress any key to quit...");
-            Console.ReadKey();
+            //Console.WriteLine("\n\nPress any key to quit...");
+            //Console.ReadKey();
             return 0;
         }
         /// <summary>

@@ -17,5 +17,18 @@ namespace wminfo.Lib
         {
 
         }
+
+        public string ToTxt()
+        {
+            string result = "";
+            result += "\nMotherboard";
+            result += "\n".PadRight(60, '-') + "\n";
+            result += "Product name".PadRight(30) + " - " + Name.ToString() + "\n";
+            result += "Manufacturer".PadRight(30) + " - " + Manufacturer.ToString() + "\n";            
+            result += "Serial number".PadRight(30) + " - " + SerialNumber.ToString() + "\n";
+            result += "Version".PadRight(30) + " - " + Version.ToString() + "\n";
+
+            return result;
+        }
     }
 }
