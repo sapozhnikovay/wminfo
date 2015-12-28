@@ -331,6 +331,10 @@ namespace wminfo.Lib
             {
                 SystemPort p = new SystemPort();
                 if (queryObj["ExternalReferenceDesignator"] != null) p.Name = queryObj["ExternalReferenceDesignator"].ToString().Trim(' ');
+                if(p.Name == "")
+                {
+                    if (queryObj["InternalReferenceDesignator"] != null) p.Name = queryObj["InternalReferenceDesignator"].ToString().Trim(' ');
+                }
                 if (queryObj["PortType"] != null) p.PortType = queryObj["PortType"].ToString().Trim(' ');
                 if (queryObj["ConnectorType"] != null) p.ConnectorType = ((ushort[])queryObj["ConnectorType"])[0].ToString().Trim(' ');
                 result.SystemPorts.Add(p);

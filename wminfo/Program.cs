@@ -206,6 +206,7 @@ namespace wminfo
         {
             if (args.Length == 0)
             {
+                DisplayHelp();
                 return 1;
             }
             else
@@ -216,8 +217,8 @@ namespace wminfo
             var computer = Crawler.GetInfo(target, username, password, categories);
             Export(computer, format, outFile, categories);
 
-            //Console.WriteLine("\n\nPress any key to quit...");
-            //Console.ReadKey();
+            Console.WriteLine("\n\nPress any key to quit...");
+            Console.ReadKey();
             return 0;
         }
         /// <summary>
