@@ -37,7 +37,7 @@ namespace wminfo
             Console.WriteLine("  --version\t\t\toutput version information and exit");
             Console.WriteLine("  --domain \"LDAP string\"\tbase search string for domain computer accounts\n\t\t\t\tex: CN=Computers,DC=domain,DC=local");
             Console.WriteLine("  --summary\t\t\tcollect and display only summary information");
-            Console.WriteLine("  --category \"category\"\t\tcollect information only by categories:\n\t\t\t\t[CPU,Audio,RAM,HDD,Video,Peripherals,Printers,\n\t\t\t\tOS,Software]");
+            Console.WriteLine("  --category \"category\"\t\tcollect information only by categories:\n\t\t\t\t[CPU,Audio,RAM,Storage,Video,Devices,Monitor,\n\t\t\t\tOS,Software,MB,Hotfix,Network]");
             Console.WriteLine("  -i \"infile.txt\"\t\tfile with names of IP-addresses for query");
             Console.WriteLine("  -o \"outfile.txt\"\t\toutput file");
             Console.WriteLine("  -f \"csv/xml/txt\"\t\toutput format");
@@ -199,6 +199,15 @@ namespace wminfo
                 }
             }
 
+            if (categories.Contains("hotfix") || all)
+            {
+                result += "\n\nOS hotfixes\n--------------------\n";
+                foreach (OSHotfix item in data.OSHotfixes)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
             return result;
         }
 
@@ -233,9 +242,10 @@ namespace wminfo
             }
             else
             {
-                ErrorExit("ERROR: Target computer name or ip-address not defined.");
+                target = "localhost";
+                //ErrorExit("ERROR: Target computer name or ip-address not defined.");
             }
-            for (int i = 1; i < args.Length; i++)
+            for (int i = 0; i < args.Length; i++)
             {
                 switch (args[i])
                 {

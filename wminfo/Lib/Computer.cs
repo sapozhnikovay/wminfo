@@ -25,6 +25,7 @@ namespace wminfo.Lib
         public List<NetworkAdapter> NetworkAdapters;
         public List<SoundDevice> SoundDevices;
         public List<Monitor> Monitors;
+        public List<OSHotfix> OSHotfixes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Computer" /> class.
@@ -43,6 +44,7 @@ namespace wminfo.Lib
             NetworkAdapters = new List<NetworkAdapter>();
             SoundDevices = new List<SoundDevice>();
             Monitors = new List<Monitor>();
+            OSHotfixes = new List<OSHotfix>();
         }
 
         public string ToTxt()

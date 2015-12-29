@@ -22,7 +22,7 @@
     <AssemblyVersionSettings>None.None.Increment.TimeStamp</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>None.None.Increment.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>None.None.Increment.TimeStamp</AssemblyInfoVersionSettings>
-    <AssemblyVersion>0.0.185.1250</AssemblyVersion>
+    <AssemblyVersion>0.1.194.1416</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -94,10 +94,12 @@
     <Compile Include="Lib\Motherboard.cs" />
     <Compile Include="Lib\NetworkAdapter.cs" />
     <Compile Include="Lib\OperatingSystem.cs" />
+    <Compile Include="Lib\OSHotfix.cs" />
     <Compile Include="Lib\PnPDevice.cs" />
     <Compile Include="Lib\Processor.cs" />
     <Compile Include="Lib\SoundDevice.cs" />
     <Compile Include="Lib\SystemPort.cs" />
+    <Compile Include="Lib\SystemSlot.cs" />
     <Compile Include="Lib\VideoController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

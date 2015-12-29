@@ -43,6 +43,7 @@ namespace wminfo.Lib
                 if (categories.Contains("network")) result.NetworkAdapters = Get_NetworkAdapters(scope);
                 if (categories.Contains("audio")) result.SoundDevices = Get_SoundDevices(scope);
                 if (categories.Contains("monitor")) result.Monitors = Get_Monitors(scope);
+                if (categories.Contains("hotfix")) result.OSHotfixes = Get_OSHotfixes(scope);
             }
             else
             {
@@ -60,6 +61,7 @@ namespace wminfo.Lib
                 result.NetworkAdapters = Get_NetworkAdapters(scope);
                 result.SoundDevices = Get_SoundDevices(scope);
                 result.Monitors = Get_Monitors(scope);
+                result.OSHotfixes = Get_OSHotfixes(scope);
             }
             return result;
         }
@@ -340,6 +342,17 @@ namespace wminfo.Lib
                 result.SystemPorts.Add(p);
             }
 
+            wmiquery = new ObjectQuery("SELECT * FROM Win32_SystemSlot");
+            searcher = new ManagementObjectSearcher(scope, wmiquery);
+            coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                SystemSlot s = new SystemSlot();
+                if (queryObj["SlotDesignation"] != null) s.SlotDesignation = queryObj["SlotDesignation"].ToString().Trim(' ');
+                if (queryObj["CurrentUsage"] != null) s.Availability = queryObj["CurrentUsage"].ToString().Trim(' ');
+                result.SystemSlots.Add(s);
+            }
+
             return result;
         }
 
@@ -599,6 +612,27 @@ namespace wminfo.Lib
                         }
                     }
                 }
+            }
+
+            return result;
+        }
+
+        public static List<OSHotfix> Get_OSHotfixes(ManagementScope scope)
+        {
+            List<OSHotfix> result = new List<OSHotfix>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_QuickFixEngineering");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pr = new OSHotfix();
+                if (queryObj["HotFixID"] != null) pr.HotfixID = queryObj["HotFixID"].ToString().Trim(' ');
+                if (queryObj["Description"] != null) pr.Description = queryObj["Description"].ToString().Trim(' ');
+                if (queryObj["Caption"] != null) pr.Caption = queryObj["Caption"].ToString().Trim(' ');
+                if (queryObj["InstalledBy"] != null) pr.InstalledBy = queryObj["InstalledBy"].ToString().Trim(' ');
+                if (queryObj["InstalledOn"] != null) pr.InstalledOn = queryObj["InstalledOn"].ToString().Trim(' ');
+                result.Add(pr);
             }
 
             return result;

@@ -13,6 +13,7 @@ namespace wminfo.Lib
         public string UUID = "";
         public string ProductNumber = "";
         public List<SystemPort> SystemPorts;
+        public List<SystemSlot> SystemSlots;
         public Chassis Chassis;
         public BIOS BIOS;
         public Motherboard Motherboard;
@@ -23,6 +24,7 @@ namespace wminfo.Lib
             Chassis = new Chassis();
             Motherboard = new Motherboard();
             SystemPorts = new List<SystemPort>();
+            SystemSlots = new List<SystemSlot>();
         }
 
         public string ToTxt()
@@ -44,6 +46,13 @@ namespace wminfo.Lib
             foreach (SystemPort port in SystemPorts)
             {
                 result += port.ToTxt();
+            }
+
+            result += "\nSystem slots";
+            result += "\n".PadRight(60, '-') + "\n";
+            foreach (SystemSlot slot in SystemSlots)
+            {
+                result += slot.ToTxt();
             }
 
             return result;
