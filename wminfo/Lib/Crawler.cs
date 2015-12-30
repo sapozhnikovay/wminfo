@@ -44,6 +44,7 @@ namespace wminfo.Lib
                 if (categories.Contains("audio")) result.SoundDevices = Get_SoundDevices(scope);
                 if (categories.Contains("monitor")) result.Monitors = Get_Monitors(scope);
                 if (categories.Contains("hotfix")) result.OSHotfixes = Get_OSHotfixes(scope);
+                if (categories.Contains("codecs")) result.Codecs = Get_Codecs(scope);
             }
             else
             {
@@ -62,6 +63,7 @@ namespace wminfo.Lib
                 result.SoundDevices = Get_SoundDevices(scope);
                 result.Monitors = Get_Monitors(scope);
                 result.OSHotfixes = Get_OSHotfixes(scope);
+                result.Codecs = Get_Codecs(scope);
             }
             return result;
         }
@@ -632,6 +634,30 @@ namespace wminfo.Lib
                 if (queryObj["Caption"] != null) pr.Caption = queryObj["Caption"].ToString().Trim(' ');
                 if (queryObj["InstalledBy"] != null) pr.InstalledBy = queryObj["InstalledBy"].ToString().Trim(' ');
                 if (queryObj["InstalledOn"] != null) pr.InstalledOn = queryObj["InstalledOn"].ToString().Trim(' ');
+                result.Add(pr);
+            }
+
+            return result;
+        }
+
+        public static List<Codec> Get_Codecs(ManagementScope scope)
+        {
+            List<Codec> result = new List<Codec>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_CodecFile");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pr = new Codec();
+                if (queryObj["FileName"] != null && queryObj["Extension"] != null) pr.Name = queryObj["FileName"].ToString().Trim(' ') + "." + queryObj["Extension"].ToString().Trim(' ');
+                if (queryObj["Group"] != null) pr.Group = queryObj["Group"].ToString().Trim(' ');
+                if (queryObj["Manufacturer"] != null) pr.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["Description"] != null) pr.Description = queryObj["Description"].ToString().Trim(' ');
+                if (queryObj["Version"] != null) pr.Version = queryObj["Version"].ToString().Trim(' ');
+                if (queryObj["InstallDate"] != null) pr.InstallDate = queryObj["InstallDate"].ToString().Trim(' ');
+                if (queryObj["LastModified"] != null) pr.Modified = queryObj["LastModified"].ToString().Trim(' ');
+                if (queryObj["LastAccessed"] != null) pr.LastAccessed = queryObj["LastAccessed"].ToString().Trim(' ');
                 result.Add(pr);
             }
 

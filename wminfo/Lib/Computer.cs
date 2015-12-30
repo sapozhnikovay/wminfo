@@ -26,6 +26,7 @@ namespace wminfo.Lib
         public List<SoundDevice> SoundDevices;
         public List<Monitor> Monitors;
         public List<OSHotfix> OSHotfixes;
+        public List<Codec> Codecs;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Computer" /> class.
@@ -45,6 +46,7 @@ namespace wminfo.Lib
             SoundDevices = new List<SoundDevice>();
             Monitors = new List<Monitor>();
             OSHotfixes = new List<OSHotfix>();
+            Codecs = new List<Codec>();
         }
 
         public string ToTxt()

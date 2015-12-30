@@ -208,6 +208,21 @@ namespace wminfo
                 }
             }
 
+            if (categories.Contains("codecs") || all)
+            {
+                result += "\n\nCodecs\n--------------------\n";
+                result += "Audio codecs\n--------------------\n";
+                foreach (Codec item in data.Codecs)
+                {
+                    if(item.Group == "Audio") result += item.ToTxt();
+                }
+                result += "\nVideo codecs\n--------------------\n";
+                foreach (Codec item in data.Codecs)
+                {
+                    if (item.Group == "Video") result += item.ToTxt();
+                }
+            }
+
             return result;
         }
 
