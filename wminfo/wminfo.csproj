@@ -22,7 +22,7 @@
     <AssemblyVersionSettings>None.None.Increment.TimeStamp</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>None.None.Increment.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>None.None.Increment.TimeStamp</AssemblyInfoVersionSettings>
-    <AssemblyVersion>0.1.212.1002</AssemblyVersion>
+    <AssemblyVersion>0.1.219.1334</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -98,9 +98,11 @@
     <Compile Include="Lib\OperatingSystem.cs" />
     <Compile Include="Lib\OSHotfix.cs" />
     <Compile Include="Lib\PnPDevice.cs" />
+    <Compile Include="Lib\Printer.cs" />
     <Compile Include="Lib\Processor.cs" />
     <Compile Include="Lib\SharedResource.cs" />
     <Compile Include="Lib\SoundDevice.cs" />
+    <Compile Include="Lib\StartupItem.cs" />
     <Compile Include="Lib\SystemPort.cs" />
     <Compile Include="Lib\SystemSlot.cs" />
     <Compile Include="Lib\VideoController.cs" />

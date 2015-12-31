@@ -48,6 +48,8 @@ namespace wminfo.Lib
                 if (categories.Contains("codecs")) result.Codecs = Get_Codecs(scope);
                 if (categories.Contains("shares")) result.SharedResources = Get_SharedResources(scope);
                 if (categories.Contains("env")) result.EnvironmentVariables = Get_EnvironmentVariables(scope);
+                if (categories.Contains("startup")) result.StartupItems = Get_StartupItems(scope);
+                if (categories.Contains("print")) result.Printers = Get_Printers(scope);
             }
             else
             {
@@ -69,6 +71,8 @@ namespace wminfo.Lib
                 result.Codecs = Get_Codecs(scope);
                 result.SharedResources = Get_SharedResources(scope);
                 result.EnvironmentVariables = Get_EnvironmentVariables(scope);
+                result.StartupItems = Get_StartupItems(scope);
+                result.Printers = Get_Printers(scope);
             }
             return result;
         }
@@ -845,6 +849,55 @@ namespace wminfo.Lib
                 if (queryObj["Name"] != null) pr.Name = queryObj["Name"].ToString().Trim(' ');
                 if (queryObj["SystemVariable"] != null) pr.isSystem = (bool)queryObj["SystemVariable"];
                 if (queryObj["VariableValue"] != null) pr.Value = queryObj["VariableValue"].ToString().Trim(' ');
+                result.Add(pr);
+            }
+
+            return result;
+        }
+
+        public static List<StartupItem> Get_StartupItems(ManagementScope scope)
+        {
+            List<StartupItem> result = new List<StartupItem>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_StartupCommand");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pr = new StartupItem();
+                if (queryObj["Name"] != null) pr.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Location"] != null) pr.Location = queryObj["Location"].ToString().Trim(' ');
+                if (queryObj["Command"] != null) pr.Command = queryObj["Command"].ToString().Trim(' ');
+                if (queryObj["User"] != null) pr.User = queryObj["User"].ToString().Trim(' ');
+                result.Add(pr);
+            }
+
+            return result;
+        }
+
+        public static List<Printer> Get_Printers(ManagementScope scope)
+        {
+            List<Printer> result = new List<Printer>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_Printer");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pr = new Printer();
+                if (queryObj["Name"] != null) pr.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Default"] != null) pr.Default = (bool)queryObj["Default"];
+                if (queryObj["EnableBIDI"] != null) pr.Bidirectional = (bool)queryObj["EnableBIDI"];
+                if (queryObj["HorizontalResolution"] != null) pr.HorizontalResolution = (int)(Convert.ToUInt32(queryObj["HorizontalResolution"]));
+                if (queryObj["VerticalResolution"] != null) pr.VerticalResolution = (int)(Convert.ToUInt32(queryObj["VerticalResolution"]));
+                if (queryObj["Network"] != null) pr.Network = (bool)queryObj["Network"];
+                if (queryObj["Published"] != null) pr.Published = (bool)queryObj["Published"];
+                if (queryObj["Shared"] != null) pr.Shared = (bool)queryObj["Shared"];
+                if (queryObj["ExtendedPrinterStatus"] != null) pr.PrinterStatus = (int)(Convert.ToUInt32(queryObj["ExtendedPrinterStatus"]));
+                if (queryObj["PrintProcessor"] != null) pr.PrintProcessor = queryObj["PrintProcessor"].ToString().Trim(' ');
+                if (queryObj["ServerName"] != null) pr.Server = queryObj["ServerName"].ToString().Trim(' ');
+                if (queryObj["ShareName"] != null) pr.ShareName = queryObj["ShareName"].ToString().Trim(' ');
+                if (queryObj["PortName"] != null) pr.PortName = queryObj["PortName"].ToString().Trim(' ');
                 result.Add(pr);
             }
 

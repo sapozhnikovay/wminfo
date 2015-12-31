@@ -247,6 +247,24 @@ namespace wminfo
                 }
             }
 
+            if (categories.Contains("startup") || all)
+            {
+                result += "\n\nAutorun applications\n--------------------\n";
+                foreach (StartupItem item in data.StartupItems)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("print") || all)
+            {
+                result += "\n\nPrinters\n--------------------\n";
+                foreach (Printer item in data.Printers)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
             return result;
         }
 

@@ -29,6 +29,8 @@ namespace wminfo.Lib
         public List<Codec> Codecs;
         public List<SharedResource> SharedResources;
         public List<EnvironmentVariable> EnvironmentVariables;
+        public List<StartupItem> StartupItems;
+        public List<Printer> Printers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Computer" /> class.
@@ -51,6 +53,8 @@ namespace wminfo.Lib
             Codecs = new List<Codec>();
             SharedResources = new List<SharedResource>();
             EnvironmentVariables = new List<EnvironmentVariable>();
+            StartupItems = new List<StartupItem>();
+            Printers = new List<Printer>();
         }
 
         public string ToTxt()
