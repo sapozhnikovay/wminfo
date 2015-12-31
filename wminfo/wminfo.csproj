@@ -22,7 +22,7 @@
     <AssemblyVersionSettings>None.None.Increment.TimeStamp</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>None.None.Increment.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>None.None.Increment.TimeStamp</AssemblyInfoVersionSettings>
-    <AssemblyVersion>0.1.200.0822</AssemblyVersion>
+    <AssemblyVersion>0.1.212.1002</AssemblyVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -87,6 +87,7 @@
     <Compile Include="Lib\Computer.cs" />
     <Compile Include="Lib\ComputerSystem.cs" />
     <Compile Include="Lib\Crawler.cs" />
+    <Compile Include="Lib\EnvironmentVariable.cs" />
     <Compile Include="Lib\HardDrive.cs" />
     <Compile Include="Lib\LogicalVolume.cs" />
     <Compile Include="Lib\Memory.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Lib\OSHotfix.cs" />
     <Compile Include="Lib\PnPDevice.cs" />
     <Compile Include="Lib\Processor.cs" />
+    <Compile Include="Lib\SharedResource.cs" />
     <Compile Include="Lib\SoundDevice.cs" />
     <Compile Include="Lib\SystemPort.cs" />
     <Compile Include="Lib\SystemSlot.cs" />

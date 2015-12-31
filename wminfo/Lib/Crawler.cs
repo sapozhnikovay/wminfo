@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,6 +46,8 @@ namespace wminfo.Lib
                 if (categories.Contains("monitor")) result.Monitors = Get_Monitors(scope);
                 if (categories.Contains("hotfix")) result.OSHotfixes = Get_OSHotfixes(scope);
                 if (categories.Contains("codecs")) result.Codecs = Get_Codecs(scope);
+                if (categories.Contains("shares")) result.SharedResources = Get_SharedResources(scope);
+                if (categories.Contains("env")) result.EnvironmentVariables = Get_EnvironmentVariables(scope);
             }
             else
             {
@@ -64,6 +67,8 @@ namespace wminfo.Lib
                 result.Monitors = Get_Monitors(scope);
                 result.OSHotfixes = Get_OSHotfixes(scope);
                 result.Codecs = Get_Codecs(scope);
+                result.SharedResources = Get_SharedResources(scope);
+                result.EnvironmentVariables = Get_EnvironmentVariables(scope);
             }
             return result;
         }
@@ -80,6 +85,137 @@ namespace wminfo.Lib
             }
 
             return a;
+        }
+
+        //Got ot from http://www.csharphelp.com/board2/read.html?f=1&i=11982&t=11982
+        static System.DateTime ToDateTime(string dmtfDate)
+        {
+            //There is a utility called mgmtclassgen that ships with the .NET SDK that
+            //will generate managed code for existing WMI classes. It also generates
+            // datetime conversion routines like this one.
+            //Thanks to Chetan Parmar and dotnet247.com for the help.
+            int year = System.DateTime.Now.Year;
+            int month = 1;
+            int day = 1;
+            int hour = 0;
+            int minute = 0;
+            int second = 0;
+            int millisec = 0;
+            string dmtf = dmtfDate;
+            string tempString = System.String.Empty;
+
+            if (((System.String.Empty == dmtf) || (dmtf == null)))
+            {
+                return System.DateTime.MinValue;
+            }
+
+            if ((dmtf.Length != 25))
+            {
+                return System.DateTime.MinValue;
+            }
+
+            tempString = dmtf.Substring(0, 4);
+            if (("****" != tempString))
+            {
+                year = System.Int32.Parse(tempString);
+            }
+
+            tempString = dmtf.Substring(4, 2);
+
+            if (("**" != tempString))
+            {
+                month = System.Int32.Parse(tempString);
+            }
+
+            tempString = dmtf.Substring(6, 2);
+
+            if (("**" != tempString))
+            {
+                day = System.Int32.Parse(tempString);
+            }
+
+            tempString = dmtf.Substring(8, 2);
+
+            if (("**" != tempString))
+            {
+                hour = System.Int32.Parse(tempString);
+            }
+
+            tempString = dmtf.Substring(10, 2);
+
+            if (("**" != tempString))
+            {
+                minute = System.Int32.Parse(tempString);
+            }
+
+            tempString = dmtf.Substring(12, 2);
+
+            if (("**" != tempString))
+            {
+                second = System.Int32.Parse(tempString);
+            }
+
+            tempString = dmtf.Substring(15, 3);
+
+            if (("***" != tempString))
+            {
+                millisec = System.Int32.Parse(tempString);
+            }
+
+            System.DateTime dateRet = new System.DateTime(year, month, day, hour, minute, second, millisec);
+
+            return dateRet;
+        }
+
+        //Got it from http://geekswithblogs.net/willemf/archive/2006/04/23/76125.aspx
+        static string DecodeProductKey(byte[] digitalProductId)
+        {
+            // Offset of first byte of encoded product key in 
+            //  'DigitalProductIdxxx" REG_BINARY value. Offset = 34H.
+            const int keyStartIndex = 52;
+            // Offset of last byte of encoded product key in 
+            //  'DigitalProductIdxxx" REG_BINARY value. Offset = 43H.
+            const int keyEndIndex = keyStartIndex + 15;
+            // Possible alpha-numeric characters in product key.
+            char[] digits = new char[]
+      {
+        'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'Q', 'R',
+        'T', 'V', 'W', 'X', 'Y', '2', '3', '4', '6', '7', '8', '9',
+      };
+            // Length of decoded product key
+            const int decodeLength = 29;
+            // Length of decoded product key in byte-form.
+            // Each byte represents 2 chars.
+            const int decodeStringLength = 15;
+            // Array of containing the decoded product key.
+            char[] decodedChars = new char[decodeLength];
+            // Extract byte 52 to 67 inclusive.
+            ArrayList hexPid = new ArrayList();
+            for (int i = keyStartIndex; i <= keyEndIndex; i++)
+            {
+                hexPid.Add(digitalProductId[i]);
+            }
+            for (int i = decodeLength - 1; i >= 0; i--)
+            {
+                // Every sixth char is a separator.
+                if ((i + 1) % 6 == 0)
+                {
+                    decodedChars[i] = '-';
+                }
+                else
+                {
+                    // Do the actual decoding.
+                    int digitMapIndex = 0;
+                    for (int j = decodeStringLength - 1; j >= 0; j--)
+                    {
+                        int byteValue = (digitMapIndex << 8) | (byte)hexPid[j];
+                        hexPid[j] = (byte)(byteValue / 24);
+                        digitMapIndex = byteValue % 24;
+                        decodedChars[i] = digits[digitMapIndex];
+                    }
+                }
+            }
+            return new string(decodedChars);
         }
 
         public static List<OperatingSystem> Get_OperatingSystems(ManagementScope scope)
@@ -103,9 +239,9 @@ namespace wminfo.Lib
                 os.CurrentTimeZone = queryObj["CurrentTimeZone"].ToString().Trim(' ');
                 os.EncryptionLevel = queryObj["EncryptionLevel"].ToString().Trim(' ');
                 os.ForegroundApplicationBoost = queryObj["ForegroundApplicationBoost"].ToString().Trim(' ');
-                os.InstallDate = queryObj["InstallDate"].ToString().Trim(' ');
-                os.LastBootupTime = queryObj["LastBootUpTime"].ToString().Trim(' ');
-                os.LocalDateTime = queryObj["LocalDateTime"].ToString().Trim(' ');
+                os.InstallDate = ToDateTime(queryObj["InstallDate"].ToString().Trim(' ')).ToString();
+                os.LastBootupTime = ToDateTime(queryObj["LastBootUpTime"].ToString().Trim(' ')).ToString();
+                os.LocalDateTime = ToDateTime(queryObj["LocalDateTime"].ToString().Trim(' ')).ToString();
                 os.Locale = queryObj["Locale"].ToString().Trim(' ');
                 os.OSLanguage = queryObj["OSLanguage"].ToString().Trim(' ');
                 os.OSType = queryObj["OSType"].ToString().Trim(' ');
@@ -115,9 +251,21 @@ namespace wminfo.Lib
                 os.WindowsDirectory = queryObj["WindowsDirectory"].ToString().Trim(' ');
                 os.SKU = queryObj["OperatingSystemSKU"].ToString().Trim(' ');
                 os.ProductName = queryObj["Caption"].ToString().Trim(' ');
+
+                string softwareRegLoc = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\";
+
+                ManagementClass registry = new ManagementClass(scope, new ManagementPath("StdRegProv"), null);
+                ManagementBaseObject inParams = registry.GetMethodParameters("GetBinaryValue");
+                inParams["hDefKey"] = 0x80000002;//HKEY_LOCAL_MACHINE
+                inParams["sSubKeyName"] = softwareRegLoc;
+                inParams["sValueName"] = "DigitalProductId";
+                // Read Registry Value 
+                ManagementBaseObject outParams = registry.InvokeMethod("GetBinaryValue", inParams, null);
+                if (outParams.Properties["uValue"].Value != null) os.ProductKey = DecodeProductKey((byte[])outParams.Properties["uValue"].Value);
+
                 result.Add(os);
             }
-
+            
             return result;
         }
 
@@ -655,9 +803,48 @@ namespace wminfo.Lib
                 if (queryObj["Manufacturer"] != null) pr.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
                 if (queryObj["Description"] != null) pr.Description = queryObj["Description"].ToString().Trim(' ');
                 if (queryObj["Version"] != null) pr.Version = queryObj["Version"].ToString().Trim(' ');
-                if (queryObj["InstallDate"] != null) pr.InstallDate = queryObj["InstallDate"].ToString().Trim(' ');
-                if (queryObj["LastModified"] != null) pr.Modified = queryObj["LastModified"].ToString().Trim(' ');
-                if (queryObj["LastAccessed"] != null) pr.LastAccessed = queryObj["LastAccessed"].ToString().Trim(' ');
+                if (queryObj["InstallDate"] != null) pr.InstallDate = ToDateTime(queryObj["InstallDate"].ToString().Trim(' ')).ToString();
+                if (queryObj["LastModified"] != null) pr.Modified = ToDateTime(queryObj["LastModified"].ToString().Trim(' ')).ToString();
+                if (queryObj["LastAccessed"] != null) pr.LastAccessed = ToDateTime(queryObj["LastAccessed"].ToString().Trim(' ')).ToString();
+                result.Add(pr);
+            }
+
+            return result;
+        }
+
+        public static List<SharedResource> Get_SharedResources(ManagementScope scope)
+        {
+            List<SharedResource> result = new List<SharedResource>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_Share");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pr = new SharedResource();
+                if (queryObj["Name"] != null) pr.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Type"] != null) pr.Type = (uint)queryObj["Type"];
+                if (queryObj["Caption"] != null) pr.Caption = queryObj["Caption"].ToString().Trim(' ');
+                if (queryObj["Path"] != null) pr.Path = queryObj["Path"].ToString().Trim(' ');
+                result.Add(pr);
+            }
+
+            return result;
+        }
+
+        public static List<EnvironmentVariable> Get_EnvironmentVariables(ManagementScope scope)
+        {
+            List<EnvironmentVariable> result = new List<EnvironmentVariable>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_Environment");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pr = new EnvironmentVariable();
+                if (queryObj["Name"] != null) pr.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["SystemVariable"] != null) pr.isSystem = (bool)queryObj["SystemVariable"];
+                if (queryObj["VariableValue"] != null) pr.Value = queryObj["VariableValue"].ToString().Trim(' ');
                 result.Add(pr);
             }
 

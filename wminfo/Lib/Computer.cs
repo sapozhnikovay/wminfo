@@ -27,6 +27,8 @@ namespace wminfo.Lib
         public List<Monitor> Monitors;
         public List<OSHotfix> OSHotfixes;
         public List<Codec> Codecs;
+        public List<SharedResource> SharedResources;
+        public List<EnvironmentVariable> EnvironmentVariables;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Computer" /> class.
@@ -47,6 +49,8 @@ namespace wminfo.Lib
             Monitors = new List<Monitor>();
             OSHotfixes = new List<OSHotfix>();
             Codecs = new List<Codec>();
+            SharedResources = new List<SharedResource>();
+            EnvironmentVariables = new List<EnvironmentVariable>();
         }
 
         public string ToTxt()

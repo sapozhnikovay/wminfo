@@ -223,6 +223,30 @@ namespace wminfo
                 }
             }
 
+            if (categories.Contains("shares") || all)
+            {
+                result += "\n\nShared resources\n--------------------\n";
+                foreach (SharedResource item in data.SharedResources)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("env") || all)
+            {
+                result += "\n\nEnvironment\n--------------------\n";
+                result += "User variables\n--------------------\n";
+                foreach (EnvironmentVariable item in data.EnvironmentVariables)
+                {
+                    if (!item.isSystem) result += item.ToTxt();
+                }
+                result += "\nSystem variables\n--------------------\n";
+                foreach (EnvironmentVariable item in data.EnvironmentVariables)
+                {
+                    if (item.isSystem) result += item.ToTxt();
+                }
+            }
+
             return result;
         }
 
