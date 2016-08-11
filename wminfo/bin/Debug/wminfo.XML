@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>wminfo</name>
+    </assembly>
+    <members>
+        <member name="T:wminfo.Lib.Computer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:wminfo.Lib.Computer.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:wminfo.Lib.Computer" /> class.
+            </summary>
+        </member>
+        <member name="T:wminfo.Lib.Memory">
+            <summary>
+            Computer memory configuration
+            </summary>
+        </member>
+        <member name="F:wminfo.Lib.Memory.PhysicalMemorySize">
+            <summary>
+            The physical memory size
+            </summary>
+        </member>
+        <member name="T:wminfo.Lib.MemoryModule">
+            <summary>
+            Represents physical memory device - RAM module
+            </summary>
+        </member>
+        <member name="M:wminfo.Program.ErrorExit(System.String)">
+            <summary>
+            Errors the exit.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:wminfo.Program.ParseArguments(System.String[])">
+            <summary>
+            Parses the arguments.
+            </summary>
+            <param name="args">The arguments.</param>
+        </member>
+        <member name="M:wminfo.Program.ParseCategories(System.String)">
+            <summary>
+            Parses the categories.
+            </summary>
+            <param name="arg">The argument.</param>
+        </member>
+    </members>
+</doc>

@@ -89,6 +89,7 @@
     <Compile Include="Lib\Crawler.cs" />
     <Compile Include="Lib\EnvironmentVariable.cs" />
     <Compile Include="Lib\HardDrive.cs" />
+    <Compile Include="Lib\Keyboard.cs" />
     <Compile Include="Lib\LogicalVolume.cs" />
     <Compile Include="Lib\Memory.cs" />
     <Compile Include="Lib\MemoryModule.cs" />
@@ -96,14 +97,18 @@
     <Compile Include="Lib\Motherboard.cs" />
     <Compile Include="Lib\NetworkAdapter.cs" />
     <Compile Include="Lib\OperatingSystem.cs" />
+    <Compile Include="Lib\OptionalFeature.cs" />
     <Compile Include="Lib\OSHotfix.cs" />
     <Compile Include="Lib\PnPDevice.cs" />
+    <Compile Include="Lib\PointingDevice.cs" />
     <Compile Include="Lib\Printer.cs" />
     <Compile Include="Lib\Processor.cs" />
+    <Compile Include="Lib\ServerRole.cs" />
     <Compile Include="Lib\SharedResource.cs" />
     <Compile Include="Lib\SoundDevice.cs" />
     <Compile Include="Lib\StartupItem.cs" />
     <Compile Include="Lib\SystemPort.cs" />
+    <Compile Include="Lib\SystemService.cs" />
     <Compile Include="Lib\SystemSlot.cs" />
     <Compile Include="Lib\VideoController.cs" />
     <Compile Include="Program.cs" />

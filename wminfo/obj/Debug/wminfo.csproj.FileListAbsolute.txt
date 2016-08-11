@@ -1,0 +1,7 @@
+C:\Users\asapozhnikov\Source\Repos\wminfo\wminfo\bin\Debug\wminfo.exe.config
+C:\Users\asapozhnikov\Source\Repos\wminfo\wminfo\bin\Debug\wminfo.XML
+C:\Users\asapozhnikov\Source\Repos\wminfo\wminfo\bin\Debug\wminfo.exe
+C:\Users\asapozhnikov\Source\Repos\wminfo\wminfo\bin\Debug\wminfo.pdb
+C:\Users\asapozhnikov\Source\Repos\wminfo\wminfo\obj\Debug\wminfo.csprojResolveAssemblyReference.cache
+C:\Users\asapozhnikov\Source\Repos\wminfo\wminfo\obj\Debug\wminfo.exe
+C:\Users\asapozhnikov\Source\Repos\wminfo\wminfo\obj\Debug\wminfo.pdb

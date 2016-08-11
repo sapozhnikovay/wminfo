@@ -50,6 +50,15 @@ namespace wminfo.Lib
                 if (categories.Contains("env")) result.EnvironmentVariables = Get_EnvironmentVariables(scope);
                 if (categories.Contains("startup")) result.StartupItems = Get_StartupItems(scope);
                 if (categories.Contains("print")) result.Printers = Get_Printers(scope);
+                if (categories.Contains("hid"))
+                {
+                    result.Keyboards = Get_Keyboards(scope);
+                    result.PointingDevices = Get_PointingDevices(scope);
+                }
+                if (categories.Contains("services")) result.SystemServices = Get_SystemServices(scope);
+                if (categories.Contains("programfiles")) result.ProgramFiles = Get_ProgramFiles(scope);
+                if (categories.Contains("features")) result.OptionalFeatures = Get_OptionalFeatures(scope);
+                if (categories.Contains("roles")) result.ServerRoles = Get_ServerRoles(scope);
             }
             else
             {
@@ -73,6 +82,12 @@ namespace wminfo.Lib
                 result.EnvironmentVariables = Get_EnvironmentVariables(scope);
                 result.StartupItems = Get_StartupItems(scope);
                 result.Printers = Get_Printers(scope);
+                result.Keyboards = Get_Keyboards(scope);
+                result.PointingDevices = Get_PointingDevices(scope);
+                result.SystemServices = Get_SystemServices(scope);
+                result.ProgramFiles = Get_ProgramFiles(scope);
+                result.OptionalFeatures = Get_OptionalFeatures(scope);
+                result.ServerRoles = Get_ServerRoles(scope);
             }
             return result;
         }
@@ -899,6 +914,212 @@ namespace wminfo.Lib
                 if (queryObj["ShareName"] != null) pr.ShareName = queryObj["ShareName"].ToString().Trim(' ');
                 if (queryObj["PortName"] != null) pr.PortName = queryObj["PortName"].ToString().Trim(' ');
                 result.Add(pr);
+            }
+
+            return result;
+        }
+
+        public static List<Keyboard> Get_Keyboards(ManagementScope scope)
+        {
+            List<Keyboard> result = new List<Keyboard>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_Keyboard");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var kb = new Keyboard();
+                string id;
+                if (queryObj["Description"] != null) kb.Name = queryObj["Description"].ToString().Trim(' ');
+                //if (queryObj["Manufacturer"] != null) kb.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["Layout"] != null) kb.Layout = queryObj["Layout"].ToString().Trim(' ');
+                if (queryObj["NumberOfFunctionKeys"] != null) kb.NumberOfFunctionKeys = Convert.ToInt32(queryObj["NumberOfFunctionKeys"]);
+                if (queryObj["PNPDeviceID"] != null)
+                {
+                    id = queryObj["PNPDeviceID"].ToString().Trim(' ').Replace("\\","\\\\");
+                    ObjectQuery wmiquery2 = new ObjectQuery("SELECT * FROM Win32_PnPEntity WHERE DeviceID = '" + id + "'");
+                    ManagementObjectSearcher searcher2 = new ManagementObjectSearcher(scope, wmiquery2);
+                    ManagementObjectCollection coll2 = searcher2.Get();
+                    foreach (ManagementObject queryObj2 in coll2)
+                    {
+                        if (queryObj2["Manufacturer"] != null) kb.Manufacturer = queryObj2["Manufacturer"].ToString().Trim(' ');
+                    }
+                }
+                result.Add(kb);
+            }
+
+            return result;
+        }
+
+        public static List<PointingDevice> Get_PointingDevices(ManagementScope scope)
+        {
+            List<PointingDevice> result = new List<PointingDevice>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_PointingDevice");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pd = new PointingDevice();
+                if (queryObj["Name"] != null) pd.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Manufacturer"] != null) pd.Manufacturer = queryObj["Manufacturer"].ToString().Trim(' ');
+                if (queryObj["NumberOfButtons"] != null) pd.NumberOfButtons = Convert.ToInt32(queryObj["NumberOfButtons"]);
+                if (queryObj["DeviceInterface"] != null)
+                {
+                    switch (Convert.ToInt32(queryObj["DeviceInterface"]))
+                    {
+                        case 1:
+                            pd.DeviceInterface = "Other";
+                            break;
+                        case 2:
+                            pd.DeviceInterface = "Unknown";
+                            break;
+                        case 3:
+                            pd.DeviceInterface = "Serial";
+                            break;
+                        case 4:
+                            pd.DeviceInterface = "PS/2";
+                            break;
+                        case 5:
+                            pd.DeviceInterface = "Infrared";
+                            break;
+                        case 6:
+                            pd.DeviceInterface = "HP-HIL";
+                            break;
+                        case 7:
+                            pd.DeviceInterface = "Bus mouse";
+                            break;
+                        case 8:
+                            pd.DeviceInterface = "ADB (Apple Desktop Bus)";
+                            break;
+                        case 160:
+                            pd.DeviceInterface = "Bus mouse DB-9";
+                            break;
+                        case 161:
+                            pd.DeviceInterface = "Bus mouse micro-DIN";
+                            break;
+                        case 162:
+                            pd.DeviceInterface = "USB";
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (queryObj["PointingType"] != null)
+                {
+                    switch (Convert.ToInt32(queryObj["PointingType"]))
+                    {
+                        case 1:
+                            pd.PointingType = "Other";
+                            break;
+                        case 2:
+                            pd.PointingType = "Unknown";
+                            break;
+                        case 3:
+                            pd.PointingType = "Mouse";
+                            break;
+                        case 4:
+                            pd.PointingType = "Track Ball";
+                            break;
+                        case 5:
+                            pd.PointingType = "Track Point";
+                            break;
+                        case 6:
+                            pd.PointingType = "Glide Point";
+                            break;
+                        case 7:
+                            pd.PointingType = "Touch Pad";
+                            break;
+                        case 8:
+                            pd.PointingType = "Touch Screen";
+                            break;
+                        case 9:
+                            pd.PointingType = "Mouse - Optical Sensor";
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                result.Add(pd);
+            }
+
+            return result;
+        }
+
+        public static List<SystemService> Get_SystemServices(ManagementScope scope)
+        {
+            List<SystemService> result = new List<SystemService>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_Service");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var pr = new SystemService();
+                if (queryObj["Name"] != null) pr.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Caption"] != null) pr.Description = queryObj["Caption"].ToString().Trim(' ');
+                if (queryObj["PathName"] != null) pr.Path = queryObj["PathName"].ToString().Trim(' ');
+                if (queryObj["StartMode"] != null) pr.StartupType = queryObj["StartMode"].ToString().Trim(' ');
+                if (queryObj["Status"] != null) pr.Status = queryObj["Status"].ToString().Trim(' ');
+                if (queryObj["StartName"] != null) pr.LogOnAs = queryObj["StartName"].ToString().Trim(' ');
+                if (queryObj["ServiceType"] != null) pr.ServiceType = queryObj["ServiceType"].ToString().Trim(' ');
+                result.Add(pr);
+            }
+
+            return result;
+        }
+
+        public static List<string> Get_ProgramFiles(ManagementScope scope)
+        {
+            List<string> result = new List<string>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_Directory WHERE Path='\\\\program files (x86)\\\\' OR Path='\\\\program files\\\\' ");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                //if (queryObj["Path"].ToString().Trim(' ') == "\\program files\\" || queryObj["Path"].ToString().Trim(' ') == "\\program files (x86)\\")
+                //{
+                if (queryObj["FileName"] != null) result.Add(queryObj["FileName"].ToString().Trim(' '));
+                //}
+            }
+
+            return result;
+        }
+
+        public static List<OptionalFeature> Get_OptionalFeatures(ManagementScope scope)
+        {
+            List<OptionalFeature> result = new List<OptionalFeature>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_OptionalFeature");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var of = new OptionalFeature();
+                if (queryObj["Name"] != null) of.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["Caption"] != null) of.Caption = queryObj["Caption"].ToString().Trim(' ');
+                if (queryObj["InstallState"] != null) of.InstallState = Convert.ToInt32(queryObj["InstallState"]);
+                result.Add(of);
+            }
+
+            return result;
+        }
+
+        public static List<ServerRole> Get_ServerRoles(ManagementScope scope)
+        {
+            List<ServerRole> result = new List<ServerRole>();
+
+            ObjectQuery wmiquery = new ObjectQuery("SELECT * FROM Win32_ServerFeature");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, wmiquery);
+            ManagementObjectCollection coll = searcher.Get();
+            foreach (ManagementObject queryObj in coll)
+            {
+                var sr = new ServerRole();
+                if (queryObj["ID"] != null) sr.ID = Convert.ToInt32(queryObj["ID"]);
+                if (queryObj["Name"] != null) sr.Name = queryObj["Name"].ToString().Trim(' ');
+                if (queryObj["ParentID"] != null) sr.ParentID = Convert.ToInt32(queryObj["ParentID"]);
+                result.Add(sr);
             }
 
             return result;

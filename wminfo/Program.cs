@@ -265,6 +265,55 @@ namespace wminfo
                 }
             }
 
+            if (categories.Contains("hid") || all)
+            {
+                result += "\n\nHID-devices\n--------------------\n";
+                foreach (Keyboard item in data.Keyboards)
+                {
+                    result += item.ToTxt();
+                }
+                foreach (PointingDevice item in data.PointingDevices)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("services") || all)
+            {
+                result += "\n\nServices\n--------------------\n";
+                foreach (SystemService item in data.SystemServices)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("programfiles") || all)
+            {
+                result += "\n\n\"Program files\" folder\n--------------------\n";
+                foreach (string item in data.ProgramFiles)
+                {
+                    result += item + "\n";
+                }
+            }
+
+            if (categories.Contains("features") || all)
+            {
+                result += "\n\nOptional features\n--------------------\n";
+                foreach (OptionalFeature item in data.OptionalFeatures)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
+            if (categories.Contains("roles") || all)
+            {
+                result += "\n\nServer roles\n--------------------\n";
+                foreach (ServerRole item in data.ServerRoles)
+                {
+                    result += item.ToTxt();
+                }
+            }
+
             return result;
         }
 

@@ -31,6 +31,12 @@ namespace wminfo.Lib
         public List<EnvironmentVariable> EnvironmentVariables;
         public List<StartupItem> StartupItems;
         public List<Printer> Printers;
+        public List<Keyboard> Keyboards;
+        public List<PointingDevice> PointingDevices;
+        public List<SystemService> SystemServices;
+        public List<string> ProgramFiles;
+        public List<OptionalFeature> OptionalFeatures;
+        public List<ServerRole> ServerRoles;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Computer" /> class.
@@ -55,6 +61,12 @@ namespace wminfo.Lib
             EnvironmentVariables = new List<EnvironmentVariable>();
             StartupItems = new List<StartupItem>();
             Printers = new List<Printer>();
+            SystemServices = new List<SystemService>();
+            ProgramFiles = new List<string>();
+            Keyboards = new List<Keyboard>();
+            PointingDevices = new List<PointingDevice>();
+            OptionalFeatures = new List<OptionalFeature>();
+            ServerRoles = new List<ServerRole>();
         }
 
         public string ToTxt()
